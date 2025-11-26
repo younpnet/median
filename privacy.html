@@ -81,7 +81,7 @@
             <ul>
                 <li>콘텐츠 제공 및 서비스 품질 향상</li>
                 <li>접속 빈도 파악 및 서비스 이용에 대한 통계</li>
-                <li><strong>Google AdSense 광고 게재 (맞춤형 광고 송출)</strong></li>
+                <li>Google AdSense 광고 게재 (맞춤형 광고 송출)</li>
             </ul>
 
             <h2>3. 쿠키(Cookie)의 운용 및 거부</h2>
@@ -93,10 +93,10 @@
                 웹사이트를 운영하는 데 이용되는 서버가 이용자의 브라우저에 보내는 아주 작은 텍스트 파일로 이용자의 컴퓨터 하드디스크에 저장됩니다.
             </p>
             <p>
-                <strong>② 구글 애드센스 (Google AdSense) 광고</strong><br>
+                ② 구글 애드센스 (Google AdSense) 광고<br>
                 본 사이트는 광고 게재를 위해 Google 등 제3자 사업자를 이용합니다.
                 Google은 쿠키(Cookie)를 사용하여 이용자가 본 사이트나 다른 웹사이트에 과거에 방문한 기록을 바탕으로 맞춤형 광고를 게재할 수 있습니다.
-                이용자는 Google의 광고 설정(<a href="https://www.google.com/settings/ads" target="_blank">https://www.google.com/settings/ads</a>)을 통해 개인 맞춤 광고 설정을 해제할 수 있습니다.
+                이용자는 Google의 광고 설정(https://www.google.com/settings/ads)을 통해 개인 맞춤 광고 설정을 해제할 수 있습니다.
             </p>
             <p>
                 <strong>③ 쿠키 설정 거부 방법</strong><br>
@@ -114,13 +114,30 @@
                 서비스 이용 중 발생하는 개인정보보호 관련 민원은 아래의 연락처로 문의해주시면 신속하게 답변해 드리겠습니다.
             </p>
             <ul>
-                <li>관리자 이메일 : <strong>[younp.net@gmail.com]</strong></li>
+                <li>관리자 이메일 : <span id="secure-email" style="user-select: none; -webkit-user-select: none; cursor: default;">Loading...</span></li>
             </ul>
 
             <hr class="my-4">
             <p class="small text-secondary mb-0">공고일자 : 2025년 11월 26일</p>
         </div>
     </div>
+
+            <script>
+                (function() {
+                    // ▼ 아래 두 줄을 본인 이메일에 맞게 수정하세요
+                    const user = 'younp.net';       // @ 앞부분 (예: honggildong)
+                    const domain = 'gmail.com';  // @ 뒷부분 (예: gmail.com)
+                    
+                    // 화면에 출력 (HTML 소스에는 이메일이 남지 않음)
+                    const emailElement = document.getElementById('secure-email');
+                    emailElement.innerText = user + '@' + domain;
+                    
+                    // 우클릭 방지 (이메일 부분만)
+                    emailElement.addEventListener('contextmenu', function(e) {
+                        e.preventDefault();
+                    });
+                })();
+            </script>
 
 </body>
 </html>
