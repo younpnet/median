@@ -1,143 +1,117 @@
+<!--
+버전 이력 (median.younp.net / privacy.html)
+v1 (2026-09-23): 최초 작성 — 수집 항목, 쿠키/광고(Google AdSense) 안내, 문의처, 시행일자
+v2 (2026-09-23): 문의처 이메일을 JS로 조합해 표시하도록 변경 — 소스에 이메일이 그대로 노출되지 않고,
+                 우클릭/드래그 선택/복사(Ctrl+C) 방지 처리 추가
+-->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>개인정보처리방침 | 2026 중위소득 가이드</title>
-    <meta name="robots" content="noindex"> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            color: #333;
-            line-height: 1.6;
-        }
-        .container-custom {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-        .policy-card {
-            background: #fff;
-            padding: 2.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #0d6efd;
-        }
-        h2 {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            color: #2c3e50;
-        }
-        p, ul {
-            font-size: 0.95rem;
-            color: #555;
-        }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 1.5rem;
-            text-decoration: none;
-            font-weight: 600;
-            color: #6c757d;
-        }
-        .back-link:hover {
-            color: #0d6efd;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>개인정보처리방침 | 중위소득 정보센터</title>
+<meta name="description" content="중위소득 정보센터(median.younp.net)의 개인정보처리방침 및 쿠키·광고 안내입니다.">
+<link rel="canonical" href="https://median.younp.net/privacy.html">
+<meta name="robots" content="index,follow">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: { brand: { 50: '#eef5ff', 100: '#dbe9ff', 200: '#bdd6ff', 300: '#90b9ff', 400: '#5b95ff', DEFAULT: '#0d6efd', 500: '#0d6efd', 600: '#0b5ed7', 700: '#0a4fb3', 800: '#093f8c', 900: '#0a2f66' }, ink: { DEFAULT: '#0b1220', 800: '#111a2b', 700: '#1b2536' } },
+        fontFamily: { sans: ['Pretendard Variable', 'Pretendard', 'system-ui', 'sans-serif'] },
+      },
+    },
+  };
+</script>
+<style>
+  body { margin: 0; background: #fff; color: #0b1220; font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a:not([class]) { color: #0d6efd; }
+</style>
 </head>
-<body>
+<body class="bg-white text-ink font-sans antialiased">
 
-    <div class="container-custom">
-        <a href="index.html" class="back-link">← 메인으로 돌아가기</a>
+<header class="border-b border-slate-200/80 bg-white/90">
+  <div class="mx-auto flex max-w-3xl items-center gap-3 px-5 py-4">
+    <iconify-icon icon="heroicons:chart-bar-square" class="text-brand" width="22" height="22"></iconify-icon>
+    <span class="text-[15.5px] font-bold tracking-tight">중위소득 정보센터</span>
+    <a href="index.html" class="ml-auto inline-flex items-center gap-1.5 rounded-full border border-slate-300 px-4 py-2 text-[13px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">
+      <iconify-icon icon="heroicons:arrow-left" width="15" height="15"></iconify-icon>홈으로
+    </a>
+  </div>
+</header>
 
-        <div class="policy-card">
-            <h1>개인정보처리방침</h1>
+<main class="mx-auto max-w-3xl px-5 py-14">
+  <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700">
+    <iconify-icon icon="heroicons:shield-check" width="14" height="14"></iconify-icon>개인정보처리방침
+  </p>
+  <h1 class="mb-4 break-keep text-[28px] font-bold leading-snug tracking-tight sm:text-[34px]">중위소득 정보센터 개인정보처리방침</h1>
+  <p class="mb-10 break-keep text-[14.5px] leading-[1.9] text-slate-600">중위소득 정보센터(이하 "사이트")는 이용자의 개인정보를 소중히 다루며, 아래와 같이 개인정보 처리 및 광고·쿠키 사용에 대해 안내합니다.</p>
 
-            <p>
-                본 웹사이트(이하 '사이트')는 이용자의 개인정보를 중요시하며, "정보통신망 이용촉진 및 정보보호"에 관한 법률을 준수하고 있습니다.
-                본 사이트는 개인정보처리방침을 통하여 이용자가 제공하는 개인정보가 어떠한 용도와 방식으로 이용되고 있으며, 개인정보보호를 위해 어떠한 조치가 취해지고 있는지 알려드립니다.
-            </p>
+  <section class="mb-9">
+    <h2 class="mb-3 text-[19px] font-bold">1. 수집하는 개인정보 항목</h2>
+    <p class="break-keep text-[14.5px] leading-[1.9] text-slate-700">본 사이트는 회원가입이나 로그인 기능을 제공하지 않으며, 이용자가 직접 입력하는 개인정보(이름, 연락처 등)를 수집하지 않습니다. 다만 서비스 이용 과정에서 접속 IP, 브라우저 종류, 방문 일시, 페이지 이용 기록 등이 자동으로 생성되어 수집될 수 있습니다.</p>
+  </section>
 
-            <h2>1. 수집하는 개인정보 항목 및 수집 방법</h2>
-            <p>
-                본 사이트는 별도의 회원가입 절차 없이 콘텐츠를 자유롭게 이용할 수 있습니다. 
-                다만, 인터넷 서비스 이용 과정에서 아래와 같은 정보들이 자동으로 생성되어 수집될 수 있습니다.
-            </p>
-            <ul>
-                <li>IP 주소, 쿠키, 서비스 이용 기록, 방문 기록, 브라우저 정보 및 OS 정보</li>
-            </ul>
+  <section class="mb-9">
+    <h2 class="mb-3 text-[19px] font-bold">2. 쿠키 및 광고 서비스 안내</h2>
+    <p class="mb-3 break-keep text-[14.5px] leading-[1.9] text-slate-700">본 사이트는 Google AdSense 등 제3자 광고 서비스를 이용하고 있으며, 이 과정에서 광고 사업자가 쿠키를 사용해 이용자의 관심사에 기반한 맞춤형 광고를 게재할 수 있습니다.</p>
+    <ul class="grid gap-2 text-[14.5px] text-slate-700">
+      <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="16" height="16"></iconify-icon><span class="break-keep">Google을 포함한 제3자 공급업체는 쿠키를 사용하여 사용자의 이전 방문 정보를 기반으로 광고를 게재합니다.</span></li>
+      <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="16" height="16"></iconify-icon><span class="break-keep">이용자는 <a href="https://adssettings.google.com/authenticated" target="_blank" rel="noopener" class="text-brand underline">Google 광고 설정</a>에서 맞춤 광고를 비활성화할 수 있습니다.</span></li>
+      <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="16" height="16"></iconify-icon><span class="break-keep">쿠키 사용에 대한 자세한 내용은 <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener" class="text-brand underline">Google 광고 정책</a>에서 확인할 수 있습니다.</span></li>
+    </ul>
+  </section>
 
-            <h2>2. 개인정보의 수집 및 이용 목적</h2>
-            <p>수집된 정보는 다음의 목적을 위해 활용됩니다.</p>
-            <ul>
-                <li>콘텐츠 제공 및 서비스 품질 향상</li>
-                <li>접속 빈도 파악 및 서비스 이용에 대한 통계</li>
-                <li>Google AdSense 광고 게재 (맞춤형 광고 송출)</li>
-            </ul>
+  <section class="mb-9">
+    <h2 class="mb-3 text-[19px] font-bold">3. 개인정보의 이용 목적 및 보유 기간</h2>
+    <p class="break-keep text-[14.5px] leading-[1.9] text-slate-700">자동으로 수집되는 접속 기록은 서비스 안정성 확보, 이용 통계 분석, 부정 이용 방지 등의 목적으로만 사용되며, 관련 법령에 따른 보관 기간이 경과하거나 목적이 달성되면 지체 없이 파기합니다.</p>
+  </section>
 
-            <h2>3. 쿠키(Cookie)의 운용 및 거부</h2>
-            <p>
-                본 사이트는 이용자에게 개별적인 맞춤 서비스를 제공하기 위해 이용정보를 저장하고 수시로 불러오는 '쿠키(cookie)'를 사용합니다.
-            </p>
-            <p>
-                <strong>① 쿠키란?</strong><br>
-                웹사이트를 운영하는 데 이용되는 서버가 이용자의 브라우저에 보내는 아주 작은 텍스트 파일로 이용자의 컴퓨터 하드디스크에 저장됩니다.
-            </p>
-            <p>
-                ② 구글 애드센스 (Google AdSense) 광고<br>
-                본 사이트는 광고 게재를 위해 Google 등 제3자 사업자를 이용합니다.
-                Google은 쿠키(Cookie)를 사용하여 이용자가 본 사이트나 다른 웹사이트에 과거에 방문한 기록을 바탕으로 맞춤형 광고를 게재할 수 있습니다.
-                이용자는 Google의 광고 설정(https://www.google.com/settings/ads)을 통해 개인 맞춤 광고 설정을 해제할 수 있습니다.
-            </p>
-            <p>
-                <strong>③ 쿠키 설정 거부 방법</strong><br>
-                이용자는 쿠키 설치에 대한 선택권을 가지고 있습니다. 따라서 웹브라우저의 옵션을 설정함으로써 모든 쿠키를 허용하거나, 쿠키가 저장될 때마다 확인을 거치거나, 아니면 모든 쿠키의 저장을 거부할 수도 있습니다.
-            </p>
+  <section class="mb-9">
+    <h2 class="mb-3 text-[19px] font-bold">4. 제3자 제공 및 위탁</h2>
+    <p class="break-keep text-[14.5px] leading-[1.9] text-slate-700">본 사이트는 이용자의 개인정보를 원칙적으로 외부에 제공하지 않습니다. 다만 광고 게재를 위해 Google 등 광고 서비스 제공업체가 자체 정책에 따라 쿠키 기반 정보를 처리할 수 있으며, 이는 각 사업자의 개인정보처리방침을 따릅니다.</p>
+  </section>
 
-            <h2>4. 제3자 사이트 링크</h2>
-            <p>
-                본 사이트는 다른 웹사이트에 대한 링크를 포함할 수 있습니다. 
-                링크된 제3자 사이트의 개인정보처리방침은 본 사이트와 무관하므로, 해당 사이트 방문 시 별도의 정책을 확인하시기 바랍니다.
-            </p>
+  <section class="mb-9">
+    <h2 class="mb-3 text-[19px] font-bold">5. 문의처</h2>
+    <p class="break-keep text-[14.5px] leading-[1.9] text-slate-700">개인정보 처리 관련 문의 사항은 아래 연락처로 문의해 주시기 바랍니다.</p>
+    <p class="mt-2 break-keep text-[14.5px] font-semibold text-ink">이메일: <span id="secure-email" style="user-select: none; -webkit-user-select: none; -moz-user-select: none; cursor: default;" class="text-slate-500">불러오는 중...</span></p>
+  </section>
 
-            <h2>5. 개인정보 관리 책임자 및 연락처</h2>
-            <p>
-                서비스 이용 중 발생하는 개인정보보호 관련 민원은 아래의 연락처로 문의해주시면 신속하게 답변해 드리겠습니다.
-            </p>
-            <ul>
-                <li>관리자 이메일 : <span id="secure-email" style="user-select: none; -webkit-user-select: none; cursor: default;">Loading...</span></li>
-            </ul>
+  <section>
+    <h2 class="mb-3 text-[19px] font-bold">6. 고지의 의무</h2>
+    <p class="break-keep text-[14.5px] leading-[1.9] text-slate-700">이 개인정보처리방침은 법령 및 방침에 따라 변경될 수 있으며, 변경 시 본 페이지를 통해 고지합니다.</p>
+    <p class="mt-4 break-keep text-[13px] text-slate-500">시행일자: 2026년 9월 23일</p>
+  </section>
 
-            <hr class="my-4">
-            <p class="small text-secondary mb-0">공고일자 : 2025년 11월 26일</p>
-        </div>
-    </div>
+  <script>
+  (function () {
+    // ▼ 본인 이메일에 맞게 아래 두 값만 수정하세요
+    var user = 'younp.net';
+    var domain = 'gmail.com';
 
-            <script>
-                (function() {
-                    // ▼ 아래 두 줄을 본인 이메일에 맞게 수정하세요
-                    const user = 'younp.net';       // @ 앞부분 (예: honggildong)
-                    const domain = 'gmail.com';  // @ 뒷부분 (예: gmail.com)
-                    
-                    // 화면에 출력 (HTML 소스에는 이메일이 남지 않음)
-                    const emailElement = document.getElementById('secure-email');
-                    emailElement.innerText = user + '@' + domain;
-                    
-                    // 우클릭 방지 (이메일 부분만)
-                    emailElement.addEventListener('contextmenu', function(e) {
-                        e.preventDefault();
-                    });
-                })();
-            </script>
+    var el = document.getElementById('secure-email');
+    if (!el) return;
+    el.textContent = user + '@' + domain;
+
+    // 우클릭으로 복사 메뉴 못 띄우게 방지
+    el.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+    // 드래그로 선택되는 것 방지 (일부 브라우저 대비)
+    el.addEventListener('selectstart', function (e) { e.preventDefault(); });
+    // Ctrl+C 등으로 복사 시도할 때 방지
+    el.addEventListener('copy', function (e) { e.preventDefault(); });
+  })();
+  </script>
+</main>
+
+<footer class="border-t border-slate-200 bg-slate-50">
+  <div class="mx-auto max-w-3xl px-5 py-8 text-[12.5px] text-slate-500">
+    <a href="index.html" class="font-medium text-slate-500 underline decoration-slate-300 underline-offset-2 hover:text-brand hover:decoration-brand">중위소득 정보센터 홈으로 돌아가기</a>
+  </div>
+</footer>
 
 </body>
 </html>

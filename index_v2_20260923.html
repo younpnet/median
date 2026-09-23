@@ -4,10 +4,6 @@ v1 (2026-09-23): 클로드 디자인 기본안 + og:image/twitter:image 메타, 
                  최종 업데이트 표시, 공유하기 버튼, 재산의 소득환산액 설명 박스 추가
 v2 (2026-09-23): 공유 버튼 클릭 시 오류 수정 — Web Share API/클립보드 API가 막힌 환경(iframe 미리보기,
                  비-HTTPS 등)에서도 에러 없이 동작하도록 try/catch + execCommand 폴백 추가
-v3 (2026-09-23): "함께 보면 좋은 글" 목록을 하드코딩에서 분리 — 저장소 루트의 related-posts.json을
-                 fetch로 불러와 렌더링. index.html을 안 건드리고 related-posts.json만 수정하면
-                 관련 글 목록을 관리할 수 있음. JSON이 없거나 로드 실패 시 섹션은 자동으로 숨김
-v4 (2026-09-23): footer 저작권 문구 옆에 개인정보처리방침(privacy.html) 링크 추가, privacy.html 신규 작성
 -->
 <!DOCTYPE html>
 <html lang="ko">
@@ -462,31 +458,17 @@ v4 (2026-09-23): footer 저작권 문구 옆에 개인정보처리방침(privacy
 
 <footer class="bg-slate-50">
   <div class="mx-auto grid max-w-5xl gap-4 px-5 py-12">
-    <div id="related-wrap" class="hidden">
-      <p class="mb-4 flex items-center gap-2 text-[15px] font-bold">
-        <iconify-icon icon="heroicons:document-text" class="text-brand" width="18" height="18"></iconify-icon>함께 보면 좋은 글
-      </p>
-      <ul id="related-posts" class="grid gap-2 text-[14.5px] sm:grid-cols-3"></ul>
-    </div>
-    <p class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] text-slate-500">
-      <span>© <span id="copyYear">2026</span> 중위소득 정보센터. 이 페이지의 정보는 참고용이며 법적 효력을 갖지 않습니다.</span>
-      <a href="privacy.html" class="font-medium text-slate-500 underline decoration-slate-300 underline-offset-2 hover:text-brand hover:decoration-brand">개인정보처리방침</a>
+    <p class="flex items-center gap-2 text-[15px] font-bold">
+      <iconify-icon icon="heroicons:document-text" class="text-brand" width="18" height="18"></iconify-icon>함께 보면 좋은 글
     </p>
+    <ul class="grid gap-2 text-[14.5px] sm:grid-cols-3">
+      <li><a href="#s3" class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-ink no-underline hover:border-brand hover:text-brand"><iconify-icon icon="heroicons:arrow-right" width="15" height="15"></iconify-icon>기초생활수급자 생계급여 기준</a></li>
+      <li><a href="#s2" class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-ink no-underline hover:border-brand hover:text-brand"><iconify-icon icon="heroicons:arrow-right" width="15" height="15"></iconify-icon>국민연금 예상 수령액 계산</a></li>
+      <li><a href="#s5" class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-ink no-underline hover:border-brand hover:text-brand"><iconify-icon icon="heroicons:arrow-right" width="15" height="15"></iconify-icon>LH 공공임대 주거지원 정보</a></li>
+    </ul>
+    <p class="text-[12.5px] text-slate-500">© <span id="copyYear">2026</span> 중위소득 정보센터. 이 페이지의 정보는 참고용이며 법적 효력을 갖지 않습니다.</p>
   </div>
 </footer>
-<script>
-fetch('/related-posts.json', { cache: 'no-cache' })
-  .then(function (r) { if (!r.ok) throw new Error('no related-posts.json'); return r.json(); })
-  .then(function (list) {
-    if (!Array.isArray(list) || !list.length) return;
-    var ul = document.getElementById('related-posts');
-    ul.innerHTML = list.slice(0, 6).map(function (item) {
-      return '<li><a href="' + item.url + '" class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-ink no-underline hover:border-brand hover:text-brand"><iconify-icon icon="heroicons:arrow-right" width="15" height="15"></iconify-icon>' + item.title + '</a></li>';
-    }).join('');
-    document.getElementById('related-wrap').classList.remove('hidden');
-  })
-  .catch(function () { /* related-posts.json이 없거나 실패하면 섹션을 그냥 숨겨둠 */ });
-</script>
 
 <script>
 // 2017~2027년 기준 중위소득 (월, 원) — 1인~6인 가구
