@@ -1,1319 +1,836 @@
+<!--
+버전 이력 (median.younp.net)
+v1 (2026-09-23): 클로드 디자인 기본안 + og:image/twitter:image 메타, 파비콘, WebPage/BreadcrumbList 스키마,
+                 최종 업데이트 표시, 공유하기 버튼, 재산의 소득환산액 설명 박스 추가
+v2 (2026-09-23): 공유 버튼 클릭 시 오류 수정 — Web Share API/클립보드 API가 막힌 환경(iframe 미리보기,
+                 비-HTTPS 등)에서도 에러 없이 동작하도록 try/catch + execCommand 폴백 추가
+-->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8" />
-    <title>기준 중위소득 완전 정리 | 뜻·표·복지 혜택·소득 분위 계산기</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="기준 중위소득 1인·4인 가구 금액, 가구원 수별 중위소득 표와 기초생활보장 생계급여·의료급여·주거급여·교육급여 기준을 정리했습니다. 우리 가구가 중위소득 몇 %인지 확인하는 소득 분위 계산기도 제공합니다." />
-    <meta name="keywords" content="기준 중위소득, 중위소득 표, 4인 가구 중위소득, 기준 중위소득 계산기, 소득분위, 기초생활수급자 기준">
-
-    <meta property="og:type" content="article">
-    <meta property="og:title" content="기준 중위소득 완전 정리 | 4인 가구 중위소득·소득 분위 계산기">
-    <meta property="og:description" content="기준 중위소득 1인·4인 가구 금액, 가구원 수별 중위소득 표와 기초생활보장 급여 기준, 소득 분위 계산기를 한 번에 확인하세요.">
-    <meta property="og:url" content="https://median.younp.net">
-    <meta property="og:site_name" content="기준 중위소득 완전 정리">
-    <meta property="og:image" content="https://median.younp.net/img/2026-median-income-calculator-summary.jpg">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="기준 중위소득 완전 정리 | 4인 가구 중위소득·소득 분위 계산기">
-    <meta name="twitter:description" content="기준 중위소득과 기초생활보장 급여 기준, 소득 분위 계산기를 정리했습니다.">
-    <meta name="twitter:image" content="https://median.younp.net/img/2026-median-income-calculator-summary.jpg">
-
-    <link rel="canonical" href="https://median.younp.net" />
-    <meta name="robots" content="index,follow">
-
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5509063936123348" crossorigin="anonymous"></script>
-
-
-  <!-- Bootstrap 5 최신버전 CSS -->
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
-
-  <style>
-    body {
-      background-color: #f8f9fa;font-size:0.9em;
-    }
-
-    /* 메인 가로폭 960px */
-    .container-custom {
-      max-width: 960px;
-      margin: 0 auto;
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
-
-    /* sticky header용 스크롤 여유 */
-    h1[id],
-    h2[id] {
-      scroll-margin-top: 90px;
-    }
-
-    .header-blur {
-      backdrop-filter: blur(10px);
-    }
-
-    .heading-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 0.35rem;
-    }
-
-    /* AOS-like scroll animation */
-    /*
-    .aos-init {
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 600ms ease-out, transform 600ms ease-out;
-    }
-    .aos-animate {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    */
-
-    /* 버튼 hover 애니메이션: 아이콘 opacity + width (위치/그림자/폰트 크기 변경 없음) */
-    .btn-anim {
-      display: inline-flex;
-      gap: 0.25rem;
-      font-weight: 700; /* 버튼 텍스트 볼드 */
-    }
-    .btn-anim-icon {
-      opacity: 0;
-      width: 0;
-      overflow: hidden;
-      transition: opacity 150ms ease-out, width 150ms ease-out;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .btn-anim:hover .btn-anim-icon {
-      opacity: 1;
-      width: 1em;
-    }
-
-    /* 표 가로 잘림 방지 */
-    .income-table th,
-    .income-table td {
-      white-space: nowrap;
-    }
-
-    /* 목차 이외의 small 글자들은 기본 사이즈로 보이도록 */
-    main .small {
-      font-size: 0.81rem;
-    }
-    /* 목차(nav.toc-nav) 안의 small만 실제로 작게 유지 */
-    .toc-nav .small {
-      font-size: 0.81rem;
-    }
-
-    /* 오른쪽 아래 TOP 버튼 */
-    .scroll-top-btn {
-      position: fixed;
-      right: 16px;
-      bottom: 24px;
-      z-index: 1050;
-      border-radius: 5px;
-      width: 40px;
-      height: 40px;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      font-size: 0.8rem;
-      font-weight: 700;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
-    }
-    .scroll-top-btn.show {
-      display: inline-flex;
-    }
-
-/* H1: 메인 타이틀 - 크고 굵게, 자간 좁힘 */
-    h1 {
-      font-size: 2.1rem;
-      font-weight: 800;
-      letter-spacing: -1px;
-      color: #111;
-      line-height: 1.3;
-      margin-bottom: 1.5rem;
-    }
-
-    /* H2: 섹션 제목 - 왼쪽에 파란색 굵은 선 + 배경 살짝 */
-    section h2 {
-      font-size: 1.55rem;
-      font-weight: 700;
-      color: #212529;
-      background-color: #fff;
-      border-left: 6px solid #0d6efd; /* 파란색 포인트 */
-      padding-left: 14px;
-      margin-top: 3rem;
-      margin-bottom: 1.2rem;
-      line-height: 1.4;
-      letter-spacing: -0.5px;
-    }
-
-    /* H3: 소제목 - 하단에 얇은 밑줄 */
-    h3 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: #495057;
-      margin-top: 1.8rem;
-      margin-bottom: 0.8rem;
-      border-bottom: 2px solid #e9ecef; /* 회색 밑줄 */
-      padding-bottom: 6px;
-      display: inline-block; /* 글자 길이만큼만 밑줄 */
-      letter-spacing: -0.5px;
-    }
-
-    /* '함께 보면 좋은 글' 등 작은 제목(h6 클래스)인 경우 밑줄 제거 */
-    h3.h6 {
-      border-bottom: none !important;
-      padding-bottom: 0 !important;
-      display: block; /* 인라인 블록 해제 */
-    }
-
-  </style>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "2026년 기준 중위소득 표 | 4인 가구 중위소득·소득 분위 계산기",
-  "description": "2026년 기준 중위소득 1인·4인 가구 금액, 가구원 수별 중위소득 표와 기초생활보장 급여 기준, 소득 분위 계산기를 한 번에 정리했습니다.",
-  "datePublished": "2025-11-25",
-  "dateModified": "2025-11-25",
-  "author": {
-    "@type": "Person",
-    "name": "작성자 이름"
-  },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://example.com/median-income-2026"
-  }
-}
-</script>
-
-
-</head>
-<body>
-
-  <!-- SVG 아이콘 정의 -->
-  <svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
-    <!-- 화살표 아이콘 -->
-    <symbol id="kb-icon-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
-    </symbol>
-
-    <!-- 외부 링크 아이콘 -->
-    <symbol id="kb-icon-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-        <polyline points="15 3 21 3 21 9"></polyline>
-        <line x1="10" y1="14" x2="21" y2="3"></line>
-    </symbol>
-
-    <!-- 정보 아이콘 -->
-    <symbol id="kb-icon-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12" y2="16"></line>
-    </symbol>
-
-    <!-- 리스트/표 아이콘 -->
-    <symbol id="kb-icon-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3" y2="6"></line><line x1="3" y1="12" x2="3" y2="12"></line><line x1="3" y1="18" x2="3" y2="18"></line>
-    </symbol>
-
-    <!-- 계산기 아이콘 -->
-    <symbol id="kb-icon-calc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="4" y="3" width="16" height="18" rx="2"></rect>
-      <rect x="7" y="6" width="10" height="4"></rect>
-      <line x1="8" y1="13" x2="10" y2="13"></line>
-      <line x1="8" y1="17" x2="10" y2="17"></line>
-      <line x1="14" y1="13" x2="16" y2="13"></line>
-      <line x1="14" y1="17" x2="16" y2="17"></line>
-    </symbol>
-
-    <symbol id="kb-icon-chevronUp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="18 15 12 9 6 15"></polyline>
-    </symbol>
-  </svg>
-
-  <!-- 헤더 -->
-  <header class="sticky-top border-bottom bg-white header-blur">
-    <div class="container-custom d-flex justify-content-between align-items-center py-2">
-      <div class="d-flex align-items-center gap-2">
-        <span class="fw-bold">중위소득 정보센터</span>
-        <span class="badge rounded-pill bg-light text-primary px-2 py-1">
-          <span class="current-year">2026</span>년 기준
-        </span>
-      </div>
-      <nav class="d-none d-md-flex gap-3 small text-secondary">
-        <a href="#top" class="text-decoration-none text-secondary">메인</a>
-        <a href="#what-is" class="text-decoration-none text-secondary">중위소득이란?</a>
-        <a href="#table-2025" class="text-decoration-none text-secondary">기준 중위소득 표</a>
-        <a href="#benefit" class="text-decoration-none text-secondary">복지 혜택</a>
-        <a href="#calc-guide" class="text-decoration-none text-secondary">계산 방법</a>
-        <a href="#quantile-calc" class="text-decoration-none text-secondary">소득 분위 계산기</a>
-        <a href="#faq" class="text-decoration-none text-secondary">FAQ</a>
-        <a href="#summary" class="text-decoration-none text-secondary">정리</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- 메인 -->
-  <main class="pb-0 mb-5">
-
-    
-
-    <div class="container-custom">
-
-      <div class="py-3 py-md-3 text-center"></div>
-
-      <article class="card border-light shadow-sm">
-        <div class="mb-0"><img src="./img/2026-median-income-calculator-summary.jpg" class="img-fluid rounded-top" alt=""></div>
-            <!--  style="background-size:auto 100% ;background-position:fixed;background-image:url('2026-median-income-calculator-summary.jpg');height:400px;background-repeat: no-repeat; background-position: 50% 50%;background-size: 100%;" -->
-        <div class="card-body p-4">
-            
-          <!-- HERO -->
-          <section class="mb-4 mb-md-5 aos-init">
-            <h1 id="top" class="mb-1 fw-bold">
-              <span class="current-year">2026</span>년 기준 중위소득 완전 정리
-            </h1>
-            <p class="text-primary fw-semibold mb-3">
-              (뜻·표·복지 혜택·소득 분위 계산기)
-            </p>
-
-            <p class="mt-2 mb-3">
-              안녕하세요. 오늘은 <span class="current-year">2026</span>년 기준 중위소득이 어떻게 바뀌었는지,  
-              그리고 우리 가구가 중위소득 몇 %·어느 소득 분위에 해당하는지까지 한 번에 정리해보려고 합니다. 특히, <span class="current-year">2026</span>년 4인 가구 중위소득과 1인·2인·3인 가구 중위소득 표, 기초생활수급자 기준까지 한 번에 정리해보겠습니다.
-            </p>
-
-            <!-- 연도 선택 -->
-            <div class="mb-3">
-              <label for="yearSelect" class="fs-5 form-label small fw-semibold mb-1">
-                ✔ 기준 연도 선택
-              </label>
-              <select id="yearSelect" class="fs-5 form-select form-select-sm" style="max-width: 200px;">
-                <option value="2026" selected>2026년</option>
-                <option value="2025">2025년</option>
-                <option value="2024">2024년</option>
-                <option value="2023">2023년</option>
-                <option value="2022">2022년</option>
-                <option value="2021">2021년</option>
-                <option value="2020">2020년</option>
-                <option value="2019">2019년</option>
-                <option value="2018">2018년</option>
-                <option value="2017">2017년</option>
-              </select>
-              <p class="text-secondary mt-1 mb-0 small">
-                2017년부터 2026년까지의 기준 중위소득을 선택해 확인할 수 있습니다.
-              </p>
-            </div>
-
-            <div class="border bg-light px-3 px-md-4 py-3 aos-init rounded-1">
-              <div class="d-flex flex-column flex-md-row gap-3 justify-content-between">
-                <div>
-                  <p class="fw-semibold text-primary mb-1 d-flex align-items-center gap-1 text-uppercase ">
-                    <svg width="1em" height="1em" aria-hidden="true">
-                      <use href="#kb-icon-list"></use>
-                    </svg>
-                    <span><span class="current-year">2026</span>년 기준 중위소득 한 눈에 보기</span>
-                  </p>
-                  <p class="mb-1 text-body">
-                    선택한 연도의 기준 중위소득은  
-                    <span class="fw-semibold text-primary">4인 가구 <span id="heroMedian4" class="count-up-dynamic">0</span>원</span>입니다.  
-                    <span class="fw-semibold">1인 가구는 <span id="heroMedian1" class="count-up-dynamic">0</span>원</span>, 
-                    <span class="fw-semibold">2인 가구는 <span id="heroMedian2" class="count-up-dynamic">0</span>원</span>, 
-                    <span class="fw-semibold">3인 가구는 <span id="heroMedian3" class="count-up-dynamic">0</span>원</span> 등  
-                    연도별로 조금씩 상향 조정되고 있습니다.
-                  </p>
-                  <p class="text-secondary mt-1 mb-0 small">
-                    ※ 보건복지부 고시 「기준 중위소득 및 생계·의료급여 선정기준과 최저보장수준」 기준.
-                  </p>
-                </div>
-                <div class="bg-white px-3 py-2 text-center border rounded-1">
-                  <p class="fw-semibold text-secondary mb-0">
-                    4인 가구
-                  </p>
-                  <p class="h5 fw-bold text-primary mb-0">
-                    <span id="heroCardMedian4" class="count-up-dynamic fs-2">0</span>
-                    <span class="fw-medium text-secondary small">원</span>
-                  </p>
-                  <p class="text-secondary mb-0 small"><span class="current-year">2026</span>년 기준 중위소득</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-3 d-flex flex-wrap gap-2">
-              <a href="#quantile-calc" class="btn btn-sm btn-dark btn-anim">
-                <span>내 소득 분위·중위소득 비율 계산하기</span>
-                <span class="btn-anim-icon">
-                  <svg width="1em" height="1em" aria-hidden="true">
-                    <use href="#kb-icon-arrow-right"></use>
-                  </svg>
-                </span>
-              </a>
-              <a href="#benefit" class="btn btn-sm btn-dark btn-anim">
-                <span>복지 혜택 기준 먼저 살펴보기</span>
-                <span class="btn-anim-icon">
-                  <svg width="1em" height="1em" aria-hidden="true">
-                    <use href="#kb-icon-arrow-right"></use>
-                  </svg>
-                </span>
-              </a>
-            </div>
-          </section>
-
-          <!-- 목차 -->
-          <nav class="mb-4 mb-md-5 border bg-light px-3 px-md-4 py-3 small aos-init toc-nav rounded-1">
-            <h2 class="d-flex align-items-center gap-1 fw-semibold text-secondary mb-2 text-uppercase small">
-              <span>목차</span>
-            </h2>
-            <div class="row gy-1">
-              <div class="col-12 col-md-6">
-                <a href="#what-is" class="text-decoration-none text-body d-block small">1. 기준 중위소득이란? 뜻과 평균소득과의 차이</a>
-              </div>
-              <div class="col-12 col-md-6">
-                <a href="#table-2025" class="text-decoration-none text-body d-block small">
-                  2. <span class="current-year">2026</span>년 가구원 수별 기준 중위소득 표
-                </a>
-              </div>
-              <div class="col-12 col-md-6">
-                <a href="#benefit" class="text-decoration-none text-body d-block small">3. 기준 중위소득과 기초생활보장 복지 혜택 관계</a>
-              </div>
-              <div class="col-12 col-md-6">
-                <a href="#calc-guide" class="text-decoration-none text-body d-block small">4. 중위소득 비율 계산 방법</a>
-              </div>
-              <div class="col-12 col-md-6">
-                <a href="#quantile-calc" class="text-decoration-none text-body d-block small">
-                  5. <span class="current-year">2026</span>년 내 소득 분위 계산기
-                </a>
-              </div>
-              <div class="col-12 col-md-6">
-                <a href="#faq" class="text-decoration-none text-body d-block small">6. FAQ 및 정리</a>
-              </div>
-            </div>
-          </nav>
-
-          <!-- 1. 중위소득이란 -->
-          <section class="mb-4 mb-md-5 aos-init">
-            <h2 id="what-is" class="fw-semibold mb-3">
-              1. 기준 중위소득이란? 뜻과 평균소득과의 차이<!-- 중위소득이란? (뜻 정리) -->
-            </h2>
-
-            <p class="text-body mb-3">
-              “중위소득”은 뉴스, 복지 안내문, 공공기관 자료에서 자주 보이는데요.  
-              막상 정확한 뜻을 설명하려고 하면 헷갈리기 쉽습니다.  
-              크게 <span class="fw-semibold">통계 개념으로서의 중위소득</span>과  
-              <span class="fw-semibold">복지 제도에서 쓰는 ‘기준 중위소득’</span>으로 나누어 이해하시면 좋습니다.
-            </p>
-
-            <h3 class="h5 fw-semibold mb-1 mt-2">
-              ① 통계 개념으로서의 중위소득
-            </h3>
-            <p class="mb-3">
-              중위소득은 우리나라 모든 가구를 소득 순으로 쭉 줄 세웠을 때  
-              정확히 <span class="fw-semibold">한가운데에 위치한 가구의 소득</span>을 말합니다.  
-              평균소득은 고소득층의 영향을 크게 받을 수 있지만,  
-              중위소득은 “중간 수준”을 보여주는 지표라 실제 생활수준을 보는 데 더 적합합니다.
-            </p>
-
-            <h3 class="h5 fw-semibold mb-1 mt-2">
-              ② 복지 제도에서 쓰는 기준 중위소득
-            </h3>
-            <p class="mb-3">
-              <span class="fw-semibold">기준 중위소득</span>은 통계청 조사자료를 토대로  
-              <span class="fw-semibold">보건복지부 장관이 매년 고시하는 금액</span>을 말합니다.  
-              단순 통계 수치가 아니라, 다음과 같은 영역에서 핵심 기준으로 활용됩니다.
-            </p>
-            <ul class="mb-3 ps-3">
-              <li>국민기초생활보장제도 (생계·의료·주거·교육급여 등)</li>
-              <li>지자체별 긴급복지, 각종 바우처 및 지원금 사업</li>
-              <li>공공임대주택, 청년·신혼부부·다자녀 지원 사업 등</li>
-            </ul>
-            <p>
-              즉 기준 중위소득은  
-              <span class="fw-semibold">“우리 가구가 어떤 복지 혜택을 받을 수 있는지”</span>를  
-              가늠하는 기준선 역할을 합니다.
-            </p>
-          </section>
-
-          <!-- 2. 가구원 수별 기준 중위소득 표 -->
-          <section class="mb-4 mb-md-5 aos-init">
-            <h2 id="table-2025" class="fw-semibold mb-3">
-              2. <span class="current-year">2026</span>년 가구원 수별 기준 중위소득 표
-            </h2>
-            <div class="mb-3"><img src="./img/2026-median-income-by-household-size.jpg" class="img-fluid rounded" alt=""></div>
-            <p class="mb-3">
-              선택하신 연도의 기준 중위소득은 1인부터 6인 가구까지 아래와 같이 고시되어 있습니다.  
-              단위는 <span class="fw-semibold">월 소득(원)</span> 기준입니다.
-            </p>
-
-            <div class="table-responsive aos-init rounded-2">
-              <table class="table align-middle mb-0 income-table table-hover">
-                <caption class="text-start small text-secondary">
-                <span class="current-year">2026</span>년 가구원 수별 기준 중위소득 표 (1~6인 가구, 월 소득 기준)
-                </caption>
-                <thead class="table-dark">
-                  <tr>
-                    <th class="text-center fw-semibold text-uppercase">가구원 수</th>
-                    <th class="text-end fw-semibold text-uppercase">기준 중위소득 (원/월)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="text-center">1인 가구</td>
-                    <td class="text-end"><span id="tableMedian1" class="count-up-dynamic">0</span>원</td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">2인 가구</td>
-                    <td class="text-end"><span id="tableMedian2" class="count-up-dynamic">0</span>원</td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">3인 가구</td>
-                    <td class="text-end"><span id="tableMedian3" class="count-up-dynamic">0</span>원</td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">4인 가구</td>
-                    <td class="text-end"><span id="tableMedian4" class="count-up-dynamic">0</span>원</td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">5인 가구</td>
-                    <td class="text-end"><span id="tableMedian5" class="count-up-dynamic">0</span>원</td>
-                  </tr>
-                  <tr>
-                    <td class="text-center">6인 가구</td>
-                    <td class="text-end"><span id="tableMedian6" class="count-up-dynamic">0</span>원</td>
-                  </tr>
-                  <tr id="tableRow7">
-                    <td class="text-center">7인 가구 (2025년 기준)</td>
-                    <td class="text-end"><span id="tableMedian7" class="count-up-dynamic">0</span>원</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <p id="eightPlusNote" class="text-secondary mt-2 small">
-              · 8인 이상 가구는 2025년 기준으로 8인 가구(9,912,051원)에 1인 증가 시마다 923,623원을 더해 계산합니다.<br />
-              · 세부 내용은 보건복지부 기준중위소득 안내 페이지에서 확인할 수 있습니다.
-            </p>
-
-            <div class="mt-3 aos-init">
-              <div class="d-flex flex-wrap gap-2">
-                <a href="#quantile-calc" class="btn btn-sm btn-dark btn-anim">
-                  <span>이 금액 기준으로 우리 집 소득 비율 계산하기</span>
-                  <span class="btn-anim-icon">
-                    <svg width="1em" height="1em" aria-hidden="true">
-                      <use href="#kb-icon-arrow-right"></use>
-                    </svg>
-                  </span>
-                </a>
-                <a href="#benefit" class="btn btn-sm btn-dark btn-anim">
-                  <span>중위소득별 받을 수 있는 복지 혜택 보기</span>
-                  <span class="btn-anim-icon">
-                    <svg width="1em" height="1em" aria-hidden="true">
-                      <use href="#kb-icon-arrow-right"></use>
-                    </svg>
-                  </span>
-                </a>
-              </div>
-
-              <div class="border-top mt-3 pt-3 fs-6 fw-bold">
-                <a
-                  href="https://www.mohw.go.kr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn-anim"
-                >
-                  <span>보건복지부 공식 홈페이지 바로가기</span>
-                  <span class="btn-anim-icon">
-                    <svg width="1em" height="1em" aria-hidden="true">
-                      <use href="#kb-icon-external"></use>
-                    </svg>
-                  </span>
-                </a>
-              </div>
-            </div>
-          </section>
-
-          <!-- 3. 복지 혜택 -->
-          <section class="mb-4 mb-md-5 aos-init">
-            <h2 id="benefit" class="fw-semibold mb-3">
-              3. 기준 중위소득과 복지 혜택 관계
-            </h2>
-
-            <!-- <div class=" mb-3"><img src="Gemini_Generated_Image_dpyzh8dpyzh8dpyz.png" class="img-fluid rounded" alt=""></div> -->
-            
-            <p class="mb-3">
-              기준 중위소득이 중요한 이유는, 각종 복지 혜택의 “문턱” 역할을 하기 때문입니다.  
-              특히 <span class="fw-semibold">국민기초생활보장제도 4대 급여(생계·의료·주거·교육급여)</span>는  
-              기준 중위소득의 일정 비율을 기준으로 수급자 선정이 이뤄집니다.
-            </p>
-
-            <div class="row g-3 align-items-stretch">
-              <div class="col-12 col-md-6">
-                <div class="border bg-light px-3 py-3 aos-init rounded-1 h-100">
-                  <h3 class="fw-semibold text-secondary mb-2 text-uppercase small d-flex align-items-center gap-1">
-                    <span>① 기초생활보장 4대 급여 선정 기준 (참고용)</span>
-                  </h3>
-                  <ul class="ps-3 mb-0">
-                    <li><span class="fw-semibold">생계급여</span> : 기준 중위소득의 <span class="fw-semibold">32% 이하</span></li>
-                    <li><span class="fw-semibold">의료급여</span> : 기준 중위소득의 <span class="fw-semibold">40% 이하</span></li>
-                    <li><span class="fw-semibold">주거급여</span> : 기준 중위소득의 <span class="fw-semibold">48% 이하</span></li>
-                    <li><span class="fw-semibold">교육급여</span> : 기준 중위소득의 <span class="fw-semibold">50% 이하</span></li>
-                  </ul>
-                  <p class="text-secondary small mt-2 mb-0">
-                    ※ 실제 연도별 기준은 보건복지부 고시를 반드시 다시 확인해 주세요.
-                  </p>
-                </div>
-              </div>
-              <div class="col-12 col-md-6">
-                <div class="border bg-light px-3 py-3 aos-init rounded-1 h-100">
-                  <h3 class="fw-semibold text-secondary mb-2 text-uppercase small d-flex align-items-center gap-1">
-                    <span>② 다른 복지 사업에서도 활용</span>
-                  </h3>
-                  <ul class="ps-3 mb-0">
-                    <li>LH 공공임대주택, 행복주택, 매입·전세 임대 등 입주 자격</li>
-                    <li>청년·신혼부부·다자녀 가구 주거·금융 지원 사업</li>
-                    <li>지자체별 한시 지원금, 에너지 바우처, 돌봄 서비스 등</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-3 aos-init">
-              <div class="d-flex flex-column gap-2 fs-6 fw-bold">
-                <a
-                  href="https://www.bokjiro.go.kr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn-anim"
-                >
-                  <span>복지로(온라인 복지 정보·신청) 바로가기</span>
-                  <span class="btn-anim-icon">
-                    <svg width="1em" height="1em" aria-hidden="true">
-                      <use href="#kb-icon-external"></use>
-                    </svg>
-                  </span>
-                </a>
-                <a
-                  href="https://www.gov.kr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn-anim"
-                >
-                  <span>정부24 복지 서비스 안내 보기</span>
-                  <span class="btn-anim-icon">
-                    <svg width="1em" height="1em" aria-hidden="true">
-                      <use href="#kb-icon-external"></use>
-                    </svg>
-                  </span>
-                </a>
-              </div>
-            </div>
-          </section>
-
-          <!-- 4. 중위소득 비율 계산 설명 -->
-          <section class="mb-4 mb-md-5 aos-init">
-            <h2 id="calc-guide" class="fw-semibold mb-3">
-              4. 우리 가구 중위소득 비율 계산 방법
-            </h2>
-
-            <p class="mb-3">
-              “우리 집은 중위소득의 몇 % 정도 될까?”  
-              정확한 판단은 주민센터에서 소득인정액을 계산해야 하지만,  
-              대략적인 수준은 아래 공식으로 직접 확인해볼 수 있습니다.
-            </p>
-
-            <h3 class="h5 fw-semibold mb-1 mt-2">
-              ① 가구원 수와 기준 중위소득 확인
-            </h3>
-            <ol class="mb-3 ps-3">
-              <li>우리 가구의 인원수(1인, 2인, 3인, 4인 등)를 확인합니다.</li>
-              <li><a href="#table-2025" class="text-primary text-decoration-underline">기준 중위소득 표</a>에서 해당 가구원 수의 금액을 찾습니다.</li>
-            </ol>
-
-            <h3 class="h5 fw-semibold mb-1 mt-2">
-              ② 소득인정액 간단 버전
-            </h3>
-            <p class="mb-2">
-              실제 제도에서는 “소득 + 재산의 소득환산액”을 모두 더한 금액을  
-              <span class="fw-semibold">소득인정액</span>이라고 부릅니다.  
-              여기서는 이해를 돕기 위해 월 소득 합계만으로 간단하게 계산해보겠습니다.
-            </p>
-
-            <h3 class="h5 fw-semibold mb-1 mt-2">
-              ③ 중위소득 대비 비율 공식
-            </h3>
-            <p class="mb-2">
-              계산식은 다음과 같습니다.
-            </p>
-            <p class="fw-semibold mb-3">
-              중위소득 비율(%) = (우리 가구 소득인정액 ÷ 해당 가구 기준 중위소득) × 100
-            </p>
-
-            <div class="border bg-light px-3 px-md-4 py-3 aos-init rounded-1">
-              <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
-                <p class="mb-0">
-                  공식은 이해하셨다면, 이제 우리 가구가 중위소득의 몇 % 수준인지 직접 계산해 보세요.
-                </p>
-                <a
-                  href="#quantile-calc"
-                  class="btn btn-primary btn-anim"
-                >
-                  <span>소득 분위 계산하러 가기</span>
-                  <span class="btn-anim-icon">
-                    <svg width="1em" height="1em" aria-hidden="true">
-                      <use href="#kb-icon-arrow-right"></use>
-                    </svg>
-                  </span>
-                </a>
-              </div>
-            </div>
-          </section>
-
-          <!-- 5. 내 소득 분위 계산기 -->
-          <section class="mb-4 mb-md-5 aos-init">
-            <h2 id="quantile-calc" class="fw-bold mb-3">
-              5. <span class="current-year">2026</span>년 내 소득 분위 계산기 <span class="small fw-semibold text-secondary">(참고용)</span>
-            </h2>
-
-            <p class="mb-3">
-              아래에서 <span class="fw-semibold">가구원 수</span>와 <span class="fw-semibold">월 소득</span>을 입력하면  
-              <span class="current-year">2026</span>년 기준 중위소득과 비교해 우리 가구가 중위소득의 몇 % 수준인지,  
-              그리고 대략 어느 소득 분위(구간)에 해당하는지 확인할 수 있습니다.
-            </p>
-
-            <div class="row g-3 aos-init align-items-stretch">
-              <!-- 폼 -->
-              <div class="col-12 col-md-7">
-                <div class="border bg-white px-3 px-md-4 py-3 rounded-1 h-100">
-                  <p class="fw-semibold text-primary mb-3 d-flex align-items-center gap-1 text-uppercase small">
-                    <svg width="1em" height="1em" aria-hidden="true">
-                      <use href="#kb-icon-calc"></use>
-                    </svg>
-                    <span>STEP 1. 기본 정보 입력</span>
-                  </p>
-                  <div class="row g-3 mb-2">
-                    <div class="col-12 col-md-6">
-                      <label for="householdSize" class="form-label small fw-semibold mb-1">가구원 수</label>
-                      <select id="householdSize" class="form-select form-select-sm">
-                        <option value="1">1인 가구</option>
-                        <option value="2">2인 가구</option>
-                        <option value="3">3인 가구</option>
-                        <option value="4" selected>4인 가구</option>
-                        <option value="5">5인 가구</option>
-                        <option value="6">6인 가구</option>
-                        <option value="7">7인 가구</option>
-                        <option value="8">8인 이상 (직접 입력)</option>
-                      </select>
-                      <input
-                        type="number"
-                        id="householdSizeCustom"
-                        class="form-control form-control-sm mt-2 d-none"
-                        placeholder="8인 이상일 경우 가구원 수 직접 입력"
-                        min="8"
-                      />
-                    </div>
-                    <div class="col-12 col-md-6">
-                      <label for="monthlyIncome" class="form-label small fw-semibold mb-1">월 소득 (원)</label>
-                      <input
-                        type="number"
-                        id="monthlyIncome"
-                        class="form-control form-control-sm"
-                        placeholder="숫자만 입력 (예: 2500000)"
-                        min="0"
-                      />
-                      <p class="text-secondary mt-1 mb-0 small">
-                        급여, 사업소득, 연금 등 월 소득 합계를 대략 입력해 주세요.
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    id="calcButton"
-                    type="button"
-                    class="btn btn-primary btn-anim mt-1"
-                  >
-                    <span>소득 분위 계산하기</span>
-                    <span class="btn-anim-icon">
-                      <svg width="1em" height="1em" aria-hidden="true">
-                        <use href="#kb-icon-arrow-right"></use>
-                      </svg>
-                    </span>
-                  </button>
-
-                  <p id="errorText" class="mt-2 fw-medium text-danger d-none mb-0 small"></p>
-                </div>
-              </div>
-
-              <!-- 결과 -->
-              <div class="col-12 col-md-5">
-                <div class="border bg-light px-3 px-md-4 py-3 rounded-1 h-100">
-                  <p class="fw-semibold text-secondary mb-2 d-flex align-items-center gap-1 text-uppercase small">
-                    <svg width="1em" height="1em" aria-hidden="true">
-                      <use href="#kb-icon-info"></use>
-                    </svg>
-                    <span>STEP 2. 결과 확인</span>
-                  </p>
-                  <div id="resultBox" class="d-none">
-                    <p id="resultSummary" class="fw-semibold mb-2"></p>
-                    <p id="ratioHighlight" class="h4 fw-bold text-primary mb-1"></p>
-                    <p id="resultDetail" class="text-body mb-2"></p>
-                    <p id="resultWarning" class="text-secondary mb-0 small"></p>
-                  </div>
-                  <div id="resultPlaceholder" class="text-secondary">
-                    가구원 수와 월 소득을 입력하신 뒤,  
-                    <span class="fw-semibold text-body">‘소득 분위 계산하기’</span> 버튼을 눌러 주세요.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-3 bg-white px-2 px-md-4 py-2 aos-init rounded-1">
-              <p class="fw-semibold mb-2">✔ 소득 분위 구간(참고용)</p>
-              <ul class="ps-3 mb-2">
-                <li>중위소득 50% 미만: 저소득 구간 (대략 1~3분위 수준)</li>
-                <li>중위소득 50~100%: 중간 구간 (대략 4~6분위 수준)</li>
-                <li>중위소득 100~150%: 중상 구간 (대략 7~8분위 수준)</li>
-                <li>중위소득 150% 이상: 상대적 고소득 구간 (대략 9~10분위 수준)</li>
-              </ul>
-              <p class="mb-0">
-                위 분위 구간은 이해를 돕기 위한 단순화된 예시이며,  
-                실제 통계청·기초생활보장제도에서 사용하는 공식 분위 구간과는 다를 수 있습니다.
-              </p>
-            </div>
-          </section>
-
-          <!-- 6. FAQ -->
-          <section class="mb-4 mb-md-5 aos-init">
-            <h2 id="faq" class="fw-semibold mb-3">
-              6. 자주 묻는 질문(FAQ)
-            </h2>
-
-            <div class="border bg-light px-3 px-md-4 py-3 mb-3 aos-init rounded-1">
-              <p class="fw-semibold text-primary mb-1 text-uppercase ">
-                Q1. 중위소득과 평균소득은 어떻게 다른가요?
-              </p>
-              <p class="mb-0">
-                평균소득은 전체 소득을 더해 가구 수로 나눈 값이라,  
-                고소득 가구가 많으면 실제보다 높게 나올 수 있습니다.  
-                반면 중위소득은 정확히 가운데에 위치한 소득이라  
-                “일반적인 가구 수준”을 보는 데 더 적합한 지표입니다.
-              </p>
-            </div>
-
-            <div class="border bg-light px-3 px-md-4 py-3 mb-3 aos-init rounded-1">
-              <p class="fw-semibold text-primary mb-1 text-uppercase ">
-                Q2. 기준 중위소득은 매년 바뀌나요?
-              </p>
-              <p class="mb-0">
-                네. 매년 물가·소득 변화를 반영해 중앙생활보장위원회 심의를 거쳐  
-                보건복지부 장관이 새로운 기준 중위소득을 고시합니다.  
-                따라서 복지 신청을 준비하실 때에는 반드시 <span class="fw-semibold">해당 연도 기준</span>을 확인해야 합니다.
-              </p>
-            </div>
-
-            <div class="border bg-light px-3 px-md-4 py-3 mb-3 aos-init rounded-1">
-              <p class="fw-semibold text-primary mb-1 text-uppercase ">
-                Q3. “기준 중위소득 50% 이하”라는 말은 무슨 뜻인가요?
-              </p>
-              <p class="mb-0">
-                같은 가구원 수에서 기준 중위소득을 100%로 두고,  
-                우리 가구의 소득인정액이 그 절반(50%) 이하라는 뜻입니다.  
-                즉, <span class="fw-semibold">소득인정액 ÷ 기준 중위소득 × 100</span>을 계산했을 때  
-                50 이하의 값이 나오면 해당 기준을 충족한다고 보시면 됩니다.
-              </p>
-            </div>
-
-            <div class="border bg-light px-3 px-md-4 py-3 aos-init rounded-1">
-              <p class="fw-semibold text-primary mb-1 text-uppercase ">
-                Q4. 우리 집이 실제로 어떤 복지 혜택을 받을 수 있는지 알고 싶어요.
-              </p>
-              <p class="mb-0">
-                이 글의 내용은 전반적인 이해를 돕기 위한 참고용입니다.  
-                실제 수급 여부는 재산, 부채, 가족 관계, 부양의무자 여부 등 다양한 요소를 함께 고려합니다.  
-                가장 정확한 방법은 <span class="fw-semibold">주소지 읍·면·동 주민센터</span>나  
-                <span class="fw-semibold">보건복지콜센터(국번 없이 129)</span>에 상담을 신청해 보는 것입니다.
-              </p>
-            </div>
-
-            <div class="mt-3 aos-init">
-              <div class="d-flex flex-column gap-2 fs-6 fw-bold">
-                <a href="tel:129" class="btn-anim">
-                  <span>보건복지콜센터(129) 전화 연결하기</span>
-                  <span class="btn-anim-icon">
-                    <svg width="1em" height="1em" aria-hidden="true">
-                      <use href="#kb-icon-external"></use>
-                    </svg>
-                  </span>
-                </a>
-                <a
-                  href="https://www.bokjiro.go.kr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn-anim"
-                >
-                  <span>복지로에서 우리 동네 복지서비스 찾기</span>
-                  <span class="btn-anim-icon">
-                    <svg width="1em" height="1em" aria-hidden="true">
-                      <use href="#kb-icon-external"></use>
-                    </svg>
-                  </span>
-                </a>
-              </div>
-            </div>
-          </section>
-
-          <!-- 7. 정리 -->
-          <section class="border-top pt-4 aos-init">
-            <h2 id="summary" class="fw-semibold mb-3">
-              7. 오늘 내용 정리
-            </h2>
-
-            <p class="mb-3">
-              오늘은 <span class="current-year">2026</span>년 기준 중위소득을 중심으로  
-              ▲중위소득의 개념 ▲가구원 수별 기준 중위소득 금액  
-              ▲기초생활보장 4대 급여와의 관계 ▲우리 가구의 중위소득 비율 계산 방법  
-              ▲참고용 소득 분위 계산기까지 살펴봤습니다.
-            </p>
-
-            <ul class="ps-3 mb-3">
-              <li>중위소득은 소득 분포의 가운데에 있는 값입니다.</li>
-              <li>현재 선택한 연도 기준 4인 가구 중위소득은 <span class="fw-semibold"><span id="summaryMedian4" class="count-up-dynamic">0</span>원</span>입니다.</li>
-              <li>기초생활보장 4대 급여는 중위소득 32% · 40% · 48% · 50% 기준으로 선정됩니다.</li>
-              <li>“소득인정액 ÷ 기준 중위소득 × 100”으로 대략적인 비율을 계산할 수 있습니다.</li>
-              <li>이 페이지의 계산기는 참고용 소득 분위 구간을 간단히 보여주는 도구입니다.</li>
-            </ul>
-
-            <p class="mb-3">
-              숫자와 용어가 다소 낯설 수 있지만, 한 번 구조를 이해해 두시면  
-              앞으로 복지 안내문이나 뉴스 기사를 보실 때 훨씬 쉽게 내용을 파악하실 수 있습니다.  
-              이 페이지가 중위소득을 이해하고, 필요한 도움을 찾는 데 작은 길잡이가 되었기를 바랍니다.
-            </p>
-
-            <div class="d-flex flex-wrap gap-2 mb-3 aos-init">
-              <a
-                href="#quantile-calc"
-                class="btn btn-sm btn-dark btn-anim"
-              >
-                <span>다시 한 번 내 소득 분위 계산해 보기</span>
-                <span class="btn-anim-icon">
-                  <svg width="1em" height="1em" aria-hidden="true">
-                    <use href="#kb-icon-arrow-right"></use>
-                  </svg>
-                </span>
-              </a>
-              <a
-                href="#faq"
-                class="btn btn-sm btn-dark btn-anim"
-              >
-                <span>자주 묻는 질문 더 자세히 보기</span>
-                <span class="btn-anim-icon">
-                  <svg width="1em" height="1em" aria-hidden="true">
-                    <use href="#kb-icon-arrow-right"></use>
-                  </svg>
-                </span>
-              </a>
-            </div>
-
-            <div class="border-top pt-3 mb-3 aos-init fs-6 fw-bold">
-              <a
-                href="https://www.lh.or.kr"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="btn-anim"
-              >
-                <span>LH 공공임대·주거지원 정보 확인하기</span>
-                <span class="btn-anim-icon">
-                  <svg width="1em" height="1em" aria-hidden="true">
-                    <use href="#kb-icon-external"></use>
-                  </svg>
-                </span>
-              </a>
-            </div>
-
-            <div class="border bg-white px-3 px-md-4 py-3 mb-2 aos-init rounded-1">
-              <p class="fw-semibold mb-2 text-uppercase ">
-                ✅ 중위소득 한 줄 요약
-              </p>
-              <p class="mb-0">
-                기준 중위소득은 <span class="fw-semibold">“복지 혜택의 기준선”</span>입니다.  
-                우리 가구의 월 소득이 중위소득의 몇 %인지 파악해 두면  
-                각종 제도 안내를 훨씬 이해하기 쉬워집니다.
-              </p>
-            </div>
-
-            <div class="border bg-white px-3 px-md-4 py-3 aos-init rounded-1">
-              <p class="fw-semibold mb-2 text-uppercase ">
-                ✅ TIP. 어디서 상담 받으면 좋을까?
-              </p>
-              <ul class="ps-3 mb-2">
-                <li>주소지 읍·면·동 주민센터</li>
-                <li>보건복지콜센터 129</li>
-                <li>지자체 복지포털·복지상담센터</li>
-              </ul>
-            </div>
-
-            <p class="mt-2 mb-0">
-              ▶ 맨 위로 돌아가기 :
-              <a href="#top" class="text-primary text-decoration-underline">
-                <span class="current-year">2026</span>년 기준 중위소득 정리 처음으로
-              </a>
-            </p>
-          </section>
-
-            <section class="mt-4 fs-6 fw-bold">
-              <h3 class="h6 fw-semibold mb-2">함께 보면 좋은 글</h3>
-              <ul class="ps-3 mb-0">
-                <li><a href="내부링크1">2026년 기초생활수급자 생계급여 기준 완전 정리</a></li>
-                <li><a href="내부링크2">2026년 국민연금 예상 수령액 계산 방법</a></li>
-              </ul>
-            </section>
-
-            <!-- 
-            기초생활수급자 자격요건
-            차상위계층 혜택
-            -->
-
-
-
-        </div>
-      </article>
-    </div>
-  </main>
-
-
-<footer class="py-4 mt-0 border-top text-center bg-light">
-    <div class="container-custom">
-        <p class="text-secondary small mb-2">
-            &copy; <span class="current-year">2026</span> 중위소득 가이드. All rights reserved.
-        </p>
-        <a href="privacy.html" class="text-decoration-none text-secondary small">개인정보처리방침</a>
-    </div>
-</footer>
-
-  <!-- 오른쪽 아래 TOP 버튼 -->
-  <button
-    type="button"
-    id="scrollTopBtn"
-    class="btn btn-dark scroll-top-btn"
-    aria-label="맨 위로 이동"
-  >
-                    <svg width="2em" height="2em" aria-hidden="true">
-                      <use href="#kb-icon-chevronUp"></use>
-                    </svg>
-  </button>
-
-  <!-- Bootstrap JS -->
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer
-  ></script>
-
-  <!-- JS: MEDIAN_BY_YEAR + 소득 분위 계산기 + 스크롤 애니메이션 -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2027년 기준 중위소득 완전 정리 | 가구원 수별 표·복지 혜택·소득 분위 계산기</title>
+<meta name="description" content="2027년 기준 중위소득 가구원 수별 금액표(1~6인), 생계·의료·주거·교육급여 선정 기준, 소득 분위 계산기를 한 번에 확인하세요. 2017~2027년 연도별 기준도 제공합니다.">
+<link rel="canonical" href="https://median.younp.net">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="2027년 기준 중위소득 완전 정리 | 가구원 수별 표·소득 분위 계산기">
+<meta property="og:description" content="2027년 기준 중위소득 4인 가구 6,929,885원. 가구원 수별 표와 복지 급여 선정 기준, 소득 분위 계산기를 정리했습니다.">
+<meta property="og:url" content="https://median.younp.net">
+<meta property="og:site_name" content="기준 중위소득 완전 정리">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:image" content="https://median.younp.net/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="2027년 기준 중위소득 4인 가구 6,929,885원 안내 이미지">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="2027년 기준 중위소득 완전 정리">
+<meta name="twitter:description" content="가구원 수별 기준 중위소득 표와 소득 분위 계산기.">
+<meta name="twitter:image" content="https://median.younp.net/og-image.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230d6efd'/%3E%3Cpath d='M28 66 V44 M50 66 V30 M72 66 V52' stroke='white' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 <script>
-    // 2017~2026년 기준 중위소득 데이터
-    const MEDIAN_BY_YEAR = {
-      2017: { 1: 1652931, 2: 2814449, 3: 3626990, 4: 4419014, 5: 5175161, 6: 6120311 },
-      2018: { 1: 1672105, 2: 2847097, 3: 3676474, 4: 4480497, 5: 5242856, 6: 6191307 },
-      2019: { 1: 1707008, 2: 2906528, 3: 3751405, 4: 4573248, 5: 5361784, 6: 6320544 },
-      2020: { 1: 1757194, 2: 2991980, 3: 3875771, 4: 4749174, 5: 5525400, 6: 6506368 },
-      2021: { 1: 1827831, 2: 3088079, 3: 4028284, 4: 4976208, 5: 5642433, 6: 6628603 },
-      2022: { 1: 1944812, 2: 3260085, 3: 4255761, 4: 5263732, 5: 5883171, 6: 6907004 },
-      2023: { 1: 2077892, 2: 3456155, 3: 4560843, 4: 5630077, 5: 6164175, 6: 7227981 },
-      2024: { 1: 2228445, 2: 3682609, 3: 4840523, 4: 5975935, 5: 6521210, 6: 7618369 },
-      2025: {
-        1: 2392013, 2: 3932658, 3: 5025353, 4: 6097773, 5: 7108192, 6: 8064805,
-        7: 8988428, median8Base: 9912051, extraPerPerson: 923623
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: { brand: { 50: '#eef5ff', 100: '#dbe9ff', 200: '#bdd6ff', 300: '#90b9ff', 400: '#5b95ff', DEFAULT: '#0d6efd', 500: '#0d6efd', 600: '#0b5ed7', 700: '#0a4fb3', 800: '#093f8c', 900: '#0a2f66' }, ink: { DEFAULT: '#0b1220', 800: '#111a2b', 700: '#1b2536' } },
+        fontFamily: { sans: ['Pretendard Variable', 'Pretendard', 'system-ui', 'sans-serif'] },
       },
-      2026: { 1: 2564238, 2: 4199292, 3: 5287892, 4: 6398542, 5: 7475752, 6: 8555952 }
-    };
-
-    // 유틸리티 함수: 숫자 포맷 (1,000 단위 콤마)
-    function formatNumber(num) {
-      if (isNaN(num)) return '-';
-      return num.toLocaleString('ko-KR');
-    }
-
-    // 유틸리티 함수: 소득 분위 라벨링
-    function getQuantileLabel(ratio) {
-      if (isNaN(ratio)) return '';
-      if (ratio < 50) return '저소득 구간 (대략 1~3분위 수준으로 추정됩니다.)';
-      if (ratio < 100) return '중간 소득 구간 (대략 4~6분위 수준으로 추정됩니다.)';
-      if (ratio < 150) return '중상 소득 구간 (대략 7~8분위 수준으로 추정됩니다.)';
-      return '상대적 고소득 구간 (대략 9~10분위 수준으로 추정됩니다.)';
-    }
-
-    // 데이터 조회 함수
-    function getMedianIncome(year, hSize) {
-      const yearData = MEDIAN_BY_YEAR[year];
-      if (!yearData) return null;
-
-      if (hSize <= 6) return yearData[hSize] || null;
-
-      // 7인 이상 예외 처리 (2025년 데이터 기준)
-      if (year === 2025) {
-        if (hSize === 7) return yearData[7] || null;
-        if (hSize >= 8 && yearData.median8Base && yearData.extraPerPerson) {
-          return yearData.median8Base + (hSize - 8) * yearData.extraPerPerson;
-        }
-      }
-      return null;
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      // 1. 요소 선택 (개선됨: 클래스 기반 일괄 선택)
-      const yearSelect = document.getElementById('yearSelect');
-      const yearTextElements = document.querySelectorAll('.current-year'); // ★ 핵심 변경 사항
-      
-      const householdSizeSelect = document.getElementById('householdSize');
-      const householdSizeCustom = document.getElementById('householdSizeCustom');
-      const monthlyIncomeInput = document.getElementById('monthlyIncome');
-      const calcButton = document.getElementById('calcButton');
-      
-      const resultBox = document.getElementById('resultBox');
-      const resultSummary = document.getElementById('resultSummary');
-      const resultDetail = document.getElementById('resultDetail');
-      const resultWarning = document.getElementById('resultWarning');
-      const errorText = document.getElementById('errorText');
-      const ratioHighlight = document.getElementById('ratioHighlight');
-      const resultPlaceholder = document.getElementById('resultPlaceholder');
-      const scrollTopBtn = document.getElementById('scrollTopBtn');
-
-      let ratioAnimationFrame = null;
-
-      // 현재 선택된 연도 가져오기
-      function getSelectedYear() {
-        const year = parseInt(yearSelect.value, 10);
-        return isNaN(year) ? 2026 : year;
-      }
-
-      // 애니메이션: 퍼센트
-      function animateRatio(target) {
-        if (ratioAnimationFrame) cancelAnimationFrame(ratioAnimationFrame);
-        const duration = 1000;
-        const startTime = performance.now();
-
-        function frame(now) {
-          const progress = Math.min((now - startTime) / duration, 1);
-          const current = target * progress;
-          ratioHighlight.textContent = current.toFixed(1) + '%';
-          if (progress < 1) ratioAnimationFrame = requestAnimationFrame(frame);
-        }
-        requestAnimationFrame(frame);
-      }
-
-      // 애니메이션: 금액 (카운트 업)
-      function animateCountUp(el, target) {
-        if (!el || typeof target !== 'number') return;
-        const duration = 800;
-        const startTime = performance.now();
-
-        function frame(now) {
-          const progress = Math.min((now - startTime) / duration, 1);
-          const current = Math.floor(target * progress);
-          el.textContent = current.toLocaleString('ko-KR');
-          if (progress < 1) requestAnimationFrame(frame);
-        }
-        requestAnimationFrame(frame);
-      }
-
-      // ★ UI 업데이트 함수 (리팩토링됨)
-      function updateMedianUI(year) {
-        const yearData = MEDIAN_BY_YEAR[year];
-        if (!yearData) return;
-
-        // 1) 연도 텍스트 일괄 변경 (반복문 사용)
-        yearTextElements.forEach(el => {
-          el.textContent = year;
-        });
-
-        // 2) 페이지 타이틀 변경
-        //document.title = `${year}년 기준 중위소득 표 | 4인 가구 중위소득·기초생활수급자 기준·소득 분위 계산기`;
-        document.title = `기준 중위소득 완전 정리 | 뜻·표·복지 혜택·소득 분위 계산기`;
-
-        // 3) 금액 데이터 업데이트 (ID 매핑)
-        const amountMapping = [
-          ['heroMedian1', yearData[1]], ['heroMedian2', yearData[2]],
-          ['heroMedian3', yearData[3]], ['heroMedian4', yearData[4]],
-          ['heroCardMedian4', yearData[4]],
-          ['tableMedian1', yearData[1]], ['tableMedian2', yearData[2]],
-          ['tableMedian3', yearData[3]], ['tableMedian4', yearData[4]],
-          ['tableMedian5', yearData[5]], ['tableMedian6', yearData[6]],
-          ['summaryMedian4', yearData[4]]
-        ];
-
-        amountMapping.forEach(([id, value]) => {
-          const el = document.getElementById(id);
-          if (el && typeof value === 'number') animateCountUp(el, value);
-        });
-
-        // 4) 7인 가구 및 2025년 특수 로직 처리
-        const row7 = document.getElementById('tableRow7');
-        const tableMedian7 = document.getElementById('tableMedian7');
-        const eightPlusNote = document.getElementById('eightPlusNote');
-
-        if (year === 2025) {
-          if (row7) row7.classList.remove('d-none');
-          if (eightPlusNote) eightPlusNote.classList.remove('d-none');
-          if (tableMedian7 && yearData[7]) animateCountUp(tableMedian7, yearData[7]);
-        } else {
-          if (row7) row7.classList.add('d-none');
-          if (eightPlusNote) eightPlusNote.classList.add('d-none');
-        }
-      }
-
-      // 입력 필드 제어 (8인 이상)
-      householdSizeSelect.addEventListener('change', () => {
-        if (householdSizeSelect.value === '8') {
-          householdSizeCustom.classList.remove('d-none');
-          householdSizeCustom.focus();
-        } else {
-          householdSizeCustom.classList.add('d-none');
-          householdSizeCustom.value = '';
-        }
-      });
-
-      function resetCalcResult() {
-        errorText.classList.add('d-none');
-        resultBox.classList.add('d-none');
-        resultPlaceholder.classList.remove('d-none');
-        ratioHighlight.textContent = '';
-      }
-
-      // 계산 실행 함수
-      function runCalculation() {
-        resetCalcResult();
-        const currentYear = getSelectedYear();
-        let hSize = parseInt(householdSizeSelect.value, 10);
-
-        // 8인 이상 처리
-        if (householdSizeSelect.value === '8') {
-          const customVal = parseInt(householdSizeCustom.value, 10);
-          if (!customVal || customVal < 8) {
-            errorText.textContent = '8인 이상일 경우, 실제 가구원 수를 8 이상으로 정확히 입력해 주세요.';
-            errorText.classList.remove('d-none');
-            return;
-          }
-          hSize = customVal;
-        }
-
-        // 2025년 외 7인 이상 제한
-        if (currentYear !== 2025 && hSize >= 7) {
-          errorText.textContent = '현재 연도에서는 6인 가구까지만 계산할 수 있습니다. (7인 이상 데이터는 2025년 기준만 제공)';
-          errorText.classList.remove('d-none');
-          return;
-        }
-
-        const income = parseInt(monthlyIncomeInput.value, 10);
-        if (!income || income <= 0) {
-          errorText.textContent = '월 소득을 0보다 큰 숫자로 입력해 주세요.';
-          errorText.classList.remove('d-none');
-          return;
-        }
-
-        const median = getMedianIncome(currentYear, hSize);
-        if (!median) {
-          errorText.textContent = '해당 조건의 기준 중위소득 데이터를 찾을 수 없습니다.';
-          errorText.classList.remove('d-none');
-          return;
-        }
-
-        // 결과 표시
-        const ratio = (income / median) * 100;
-        const ratioRounded = Math.round(ratio * 10) / 10;
-        
-        resultSummary.innerHTML = `
-          ${currentYear}년 ${hSize}인 가구 기준 중위소득은 <span class="fw-bold">${formatNumber(median)}원</span>이며,<br>
-          입력하신 소득은 중위소득의 약 <span class="text-primary fw-bold">${ratioRounded}%</span> 수준입니다.
-        `;
-        
-        animateRatio(ratioRounded);
-        resultDetail.textContent = getQuantileLabel(ratio);
-        resultWarning.textContent = '※ 이 결과는 단순 소득 비교용이며, 실제 복지 대상자 선정(소득인정액) 기준과는 다를 수 있습니다.';
-
-        resultPlaceholder.classList.add('d-none');
-        resultBox.classList.remove('d-none');
-      }
-
-      // 이벤트 리스너 등록
-      calcButton.addEventListener('click', runCalculation);
-      monthlyIncomeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') runCalculation(); });
-      householdSizeCustom.addEventListener('keydown', (e) => { if (e.key === 'Enter') runCalculation(); });
-      
-      yearSelect.addEventListener('change', () => {
-        updateMedianUI(getSelectedYear());
-        resetCalcResult();
-      });
-
-      // 스크롤 애니메이션 (AOS-like)
-      const aosElements = document.querySelectorAll('.aos-init');
-      const observer = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('aos-animate');
-            obs.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.15 });
-      aosElements.forEach(el => observer.observe(el));
-
-      // TOP 버튼 로직
-      if (scrollTopBtn) {
-        window.addEventListener('scroll', () => {
-          scrollTopBtn.classList.toggle('show', window.scrollY > 300);
-        });
-        scrollTopBtn.addEventListener('click', () => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-      }
-
-      // 초기화 실행
-      updateMedianUI(getSelectedYear());
-    });
+    },
+  };
 </script>
-
+<style>
+  body { margin: 0; background: #fff; color: #0b1220; font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  a:not([class]) { color: #0d6efd; }
+  a:not([class]):hover { color: #0b5ed7; }
+  :focus-visible { outline: 2px solid #0d6efd; outline-offset: 2px; }
+  ::selection { background: rgba(13,110,253,0.18); }
+  iconify-icon { display: inline-block; vertical-align: -0.125em; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+  [id] { scroll-margin-top: 112px; }
+  .nav-scroll { scrollbar-width: none; }
+  .nav-scroll::-webkit-scrollbar { display: none; }
+  [data-aos].aos-animate { opacity: 1 !important; transform: none !important; }
+  @keyframes yearFlash { 0% { background-size: 0% 2px; } 100% { background-size: 100% 2px; } }
+  [data-year] { background-image: linear-gradient(currentColor, currentColor); background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 2px; padding-bottom: 0.14em; }
+  .year-flash { animation: yearFlash 700ms ease-out; }
+  :where(h1, h2, h3):has([data-year]) { line-height: 1.4 !important; }
+  :where(p, li, div, td, th):has(> [data-year]) { line-height: 1.75; }
+  h1 .year-em { color: #0d6efd; }
+</style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "Q1. 중위소득과 평균소득은 어떻게 다른가요?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "평균소득은 전체 소득을 더해 가구 수로 나눈 값이라, 고소득 가구가 많으면 실제보다 높게 나올 수 있습니다. 반면 중위소득은 정확히 가운데에 위치한 소득이라 “일반적인 가구 수준”을 보는 데 더 적합한 지표입니다."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Q2. 기준 중위소득은 매년 바뀌나요?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "네. 매년 물가·소득 변화를 반영해 중앙생활보장위원회 심의를 거쳐 보건복지부 장관이 새로운 기준 중위소득을 고시합니다. 따라서 복지 신청을 준비하실 때에는 반드시 해당 연도 기준을 확인해야 합니다."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Q3. “기준 중위소득 50% 이하”라는 말은 무슨 뜻인가요?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "같은 가구원 수에서 기준 중위소득을 100%로 두고, 우리 가구의 소득인정액이 그 절반(50%) 이하라는 뜻입니다. 즉, 소득인정액 ÷ 기준 중위소득 × 100을 계산했을 때 50 이하의 값이 나오면 해당 기준을 충족한다고 보시면 됩니다."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Q4. 우리 집이 실제로 어떤 복지 혜택을 받을 수 있는지 알고 싶어요.",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "이 글의 내용은 전반적인 이해를 돕기 위한 참고용입니다. 실제 수급 여부는 재산, 부채, 가족 관계, 부양의무자 여부 등 다양한 요소를 함께 고려합니다. 가장 정확한 방법은 주소지 읍·면·동 주민센터나 보건복지콜센터(국번 없이 129)에 상담을 신청해 보는 것입니다."
-      }
-    }
+    {"@type":"Question","name":"중위소득과 평균소득은 어떻게 다른가요?","acceptedAnswer":{"@type":"Answer","text":"평균소득은 전체 소득을 인원수로 나눈 값이고, 중위소득은 소득 순으로 줄을 세웠을 때 가운데 값입니다. 고소득 가구가 많을수록 평균은 위로 끌려가므로 중위소득이 일반적인 가구의 형편에 더 가깝습니다."}},
+    {"@type":"Question","name":"기준 중위소득은 매년 바뀌나요?","acceptedAnswer":{"@type":"Answer","text":"네, 매년 바뀝니다. 보건복지부 중앙생활보장위원회 심의를 거쳐 다음 해에 적용할 기준 중위소득을 고시합니다."}},
+    {"@type":"Question","name":"2027년 기준 중위소득 4인 가구 금액은 얼마인가요?","acceptedAnswer":{"@type":"Answer","text":"2027년 기준 중위소득은 4인 가구 월 6,929,885원, 1인 가구 월 2,736,042원입니다. 2026년 대비 6.70% 인상되었습니다."}},
+    {"@type":"Question","name":"중위소득 50% 이하면 모두 수급자가 되나요?","acceptedAnswer":{"@type":"Answer","text":"그렇지 않습니다. 소득이 중위소득의 일정 비율 이하라도 재산의 소득환산액과 급여별 기준을 함께 보기 때문에 소득만으로 수급 여부가 결정되지는 않습니다."}}
   ]
 }
 </script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "2027년 기준 중위소득 완전 정리",
+  "url": "https://median.younp.net",
+  "inLanguage": "ko-KR",
+  "dateModified": "2026-09-23",
+  "isPartOf": { "@type": "WebSite", "name": "중위소득 정보센터", "url": "https://median.younp.net" },
+  "breadcrumb": {
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "홈", "item": "https://median.younp.net" },
+      { "@type": "ListItem", "position": 2, "name": "2027년 기준 중위소득 완전 정리", "item": "https://median.younp.net" }
+    ]
+  }
+}
+</script>
+</head>
+<body id="top" class="bg-white text-ink font-sans antialiased">
 
+<header class="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur">
+  <div class="mx-auto max-w-5xl px-5">
+    <div class="flex items-center gap-3 py-3">
+      <iconify-icon icon="heroicons:chart-bar-square" class="text-brand" width="22" height="22"></iconify-icon>
+      <span class="shrink-0 whitespace-nowrap text-[15.5px] font-bold tracking-tight sm:text-[17px]">중위소득 정보센터</span>
+      <span class="hidden shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-brand-700 tabular-nums sm:inline-block"><span data-year></span> 기준</span>
+      <a href="#s5" class="ml-auto inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-brand px-4 py-2 text-[13px] font-semibold text-white no-underline hover:bg-brand-600 hover:text-white active:bg-brand-700">
+        <iconify-icon icon="heroicons:calculator" width="16" height="16"></iconify-icon>계산기
+      </a>
+    </div>
+    <nav class="nav-scroll -mx-5 flex gap-1 overflow-x-auto px-5 pb-2 text-[13.5px] font-medium">
+      <a href="#top" class="whitespace-nowrap rounded-full px-3 py-2 text-slate-600 no-underline hover:bg-brand-50 hover:text-brand-700">홈</a>
+      <a href="#s1" class="whitespace-nowrap rounded-full px-3 py-2 text-slate-600 no-underline hover:bg-brand-50 hover:text-brand-700">중위소득이란?</a>
+      <a href="#s2" class="whitespace-nowrap rounded-full px-3 py-2 text-slate-600 no-underline hover:bg-brand-50 hover:text-brand-700">기준 중위소득 표</a>
+      <a href="#s3" class="whitespace-nowrap rounded-full px-3 py-2 text-slate-600 no-underline hover:bg-brand-50 hover:text-brand-700">복지 혜택</a>
+      <a href="#s4" class="whitespace-nowrap rounded-full px-3 py-2 text-slate-600 no-underline hover:bg-brand-50 hover:text-brand-700">계산 방법</a>
+      <a href="#s5" class="whitespace-nowrap rounded-full px-3 py-2 text-slate-600 no-underline hover:bg-brand-50 hover:text-brand-700">소득 분위 계산기</a>
+      <a href="#s6" class="whitespace-nowrap rounded-full px-3 py-2 text-slate-600 no-underline hover:bg-brand-50 hover:text-brand-700">FAQ</a>
+      <a href="#s7" class="whitespace-nowrap rounded-full px-3 py-2 text-slate-600 no-underline hover:bg-brand-50 hover:text-brand-700">정리</a>
+    </nav>
+  </div>
+</header>
+<section class="relative overflow-hidden bg-gradient-to-b from-brand-50 via-white to-white">
+  <div class="mx-auto max-w-5xl px-5 pb-14 pt-14 sm:pt-20">
+    <p class="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
+      <span class="inline-flex items-center gap-2"><iconify-icon icon="heroicons:sparkles" width="14" height="14"></iconify-icon>중위소득 정보센터 / <span data-year></span> 기준</span>
+      <span class="inline-flex items-center gap-1 normal-case tracking-normal text-slate-400">· 최종 업데이트 2026.09.23</span>
+    </p>
+    <h1 class="mb-5 break-keep text-[34px] font-bold leading-[1.2] tracking-tight sm:text-5xl" data-aos="fade-up" data-aos-delay="60"><span data-year class="year-em"></span> 기준 중위소득<br class="hidden sm:block"> 완전 정리</h1>
+    <p class="mb-9 max-w-xl break-keep text-[15px] leading-relaxed text-slate-600 sm:text-base" data-aos="fade-up" data-aos-delay="120">뜻과 평균소득의 차이, 가구원 수별 금액표, 복지 혜택 선정 기준, 그리고 내 소득 분위까지 한 페이지에서 확인하세요.</p>
+    <div class="grid gap-3 sm:grid-cols-2">
+      <div class="rounded-3xl bg-brand p-6 text-white shadow-lg shadow-brand-200" data-aos="fade-up" data-aos-delay="160">
+        <p class="mb-2 flex items-center gap-1.5 text-[13px] font-medium text-brand-100">
+          <iconify-icon icon="heroicons:user-group" width="16" height="16"></iconify-icon><span data-year></span> 4인 가구 월 기준
+        </p>
+        <p class="text-[34px] font-bold leading-none tracking-tight tabular-nums sm:text-[40px]" data-median4></p>
+      </div>
+      <div class="rounded-3xl border border-slate-200 bg-white p-6" data-aos="fade-up" data-aos-delay="220">
+        <p class="mb-2 flex items-center gap-1.5 text-[13px] font-medium text-slate-500">
+          <iconify-icon icon="heroicons:user" width="16" height="16"></iconify-icon><span data-year></span> 1인 가구 월 기준
+        </p>
+        <p class="text-[34px] font-bold leading-none tracking-tight text-ink tabular-nums sm:text-[40px]" data-median1></p>
+      </div>
+    </div>
+    <p class="mt-9 max-w-2xl break-keep text-[15px] leading-[1.9] text-slate-700" data-aos="fade-up"><span data-year></span> 기준 중위소득이 얼마인지, 우리 가구가 중위소득의 몇 퍼센트에 해당하는지 궁금한 분들을 위해 정리했습니다. 가구원 수별 금액표와 복지 제도별 선정 기준, 내 소득 분위를 직접 확인하는 계산 방법까지 담았습니다.</p>
+  </div>
+</section>
+
+<section class="border-y border-slate-200 bg-slate-50">
+  <div class="mx-auto max-w-5xl px-5 py-12">
+    <p class="mb-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500" data-aos="fade-up">
+      <iconify-icon icon="heroicons:calendar-days" width="14" height="14"></iconify-icon>기준 연도 선택
+    </p>
+    <div class="flex flex-wrap items-center gap-2.5" data-aos="fade-up" data-aos-delay="60">
+      <button type="button" data-year-pick="2027" class="rounded-full px-6 py-3 text-[15px] font-semibold tabular-nums">2027년 (내년 기준)</button>
+      <button type="button" data-year-pick="2026" class="rounded-full px-6 py-3 text-[15px] font-semibold tabular-nums">2026년 (올해 기준)</button>
+      <div class="flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2">
+        <iconify-icon icon="heroicons:calendar-days" class="text-slate-400" width="16" height="16"></iconify-icon>
+        <label for="year-select" class="text-[13px] text-slate-500">연도 직접 선택</label>
+        <select id="year-select" class="rounded-full border-0 bg-transparent py-1 pl-1 pr-6 text-[14px] font-semibold text-ink tabular-nums focus:ring-0"></select>
+      </div>
+    </div>
+    <div class="mt-7 grid gap-3 sm:grid-cols-2">
+      <div class="rounded-2xl border border-slate-200 bg-white p-5" data-aos="fade-up" data-aos-delay="100">
+        <p class="mb-1.5 text-[13px] text-slate-500"><span data-year></span> · 4인 가구 월 기준</p>
+        <p class="text-2xl font-bold tracking-tight tabular-nums" data-median4></p>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-white p-5" data-aos="fade-up" data-aos-delay="150">
+        <p class="mb-1.5 text-[13px] text-slate-500"><span data-year></span> · 1인 가구 월 기준</p>
+        <p class="text-2xl font-bold tracking-tight tabular-nums" data-median1></p>
+      </div>
+    </div>
+    <p class="mt-4 flex gap-2 break-keep text-[13px] leading-relaxed text-slate-500">
+      <iconify-icon icon="heroicons:information-circle" class="mt-0.5 shrink-0" width="15" height="15"></iconify-icon>
+      <span>2017년부터 2027년까지 선택할 수 있고, 선택한 연도가 아래 표와 계산기에 함께 적용됩니다. 2027년 기준 중위소득은 2026년 7월 28일 제80차 중앙생활보장위원회 의결 금액(4인 가구 6.70% 인상)으로, 2027년 1월 1일부터 적용됩니다.</span>
+    </p>
+  </div>
+</section>
+
+<nav class="mx-auto max-w-5xl px-5 py-12">
+  <p class="mb-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+    <iconify-icon icon="heroicons:list-bullet" width="14" height="14"></iconify-icon>목차
+  </p>
+  <ol class="grid gap-2 sm:grid-cols-2">
+    <li data-aos="fade-up"><a href="#s1" class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3.5 text-[15px] font-medium text-ink no-underline hover:border-brand-300 hover:bg-brand-50 hover:text-ink"><span class="text-[12px] font-bold text-brand tabular-nums">01</span><span class="break-keep">기준 중위소득이란? 평균소득과의 차이</span></a></li>
+    <li data-aos="fade-up" data-aos-delay="40"><a href="#s2" class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3.5 text-[15px] font-medium text-ink no-underline hover:border-brand-300 hover:bg-brand-50 hover:text-ink"><span class="text-[12px] font-bold text-brand tabular-nums">02</span><span class="break-keep">가구원 수별 기준 중위소득 표</span></a></li>
+    <li data-aos="fade-up" data-aos-delay="80"><a href="#s3" class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3.5 text-[15px] font-medium text-ink no-underline hover:border-brand-300 hover:bg-brand-50 hover:text-ink"><span class="text-[12px] font-bold text-brand tabular-nums">03</span><span class="break-keep">기준 중위소득과 복지 혜택의 관계</span></a></li>
+    <li data-aos="fade-up" data-aos-delay="120"><a href="#s4" class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3.5 text-[15px] font-medium text-ink no-underline hover:border-brand-300 hover:bg-brand-50 hover:text-ink"><span class="text-[12px] font-bold text-brand tabular-nums">04</span><span class="break-keep">우리 가구 중위소득 비율 계산 방법</span></a></li>
+    <li data-aos="fade-up" data-aos-delay="160"><a href="#s5" class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3.5 text-[15px] font-medium text-ink no-underline hover:border-brand-300 hover:bg-brand-50 hover:text-ink"><span class="text-[12px] font-bold text-brand tabular-nums">05</span><span class="break-keep">내 소득 분위 계산기</span></a></li>
+    <li data-aos="fade-up" data-aos-delay="200"><a href="#s6" class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3.5 text-[15px] font-medium text-ink no-underline hover:border-brand-300 hover:bg-brand-50 hover:text-ink"><span class="text-[12px] font-bold text-brand tabular-nums">06</span><span class="break-keep">자주 묻는 질문과 오늘 내용 정리</span></a></li>
+  </ol>
+</nav>
+
+<article id="s1" class="border-t border-slate-200 bg-white">
+  <div class="mx-auto max-w-5xl px-5 py-14">
+    <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
+      <iconify-icon icon="heroicons:book-open" width="14" height="14"></iconify-icon>01 / 개념
+    </p>
+    <h2 class="mb-6 break-keep text-[26px] font-bold leading-snug tracking-tight sm:text-[32px]" data-aos="fade-up" data-aos-delay="60">기준 중위소득이란? 뜻과 평균소득과의 차이</h2>
+    <p class="mb-8 max-w-2xl break-keep text-[15px] leading-[1.9] text-slate-700" data-aos="fade-up" data-aos-delay="100">중위소득은 전 국민을 소득 순으로 줄 세웠을 때 정확히 가운데에 있는 가구의 소득입니다. 평균소득은 고소득층의 영향을 크게 받을 수 있지만, 중위소득은 가운데 값을 보여주기 때문에 실제 생활 수준을 보는 데 더 적합합니다.</p>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="rounded-3xl border border-slate-200 bg-slate-50/70 p-6" data-aos="fade-up">
+        <span class="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[11px] font-bold text-brand-700">
+          <iconify-icon icon="heroicons:chart-pie" width="14" height="14"></iconify-icon>통계 개념
+        </span>
+        <h3 class="mb-2.5 break-keep text-[18px] font-bold">가운데 값으로서의 중위소득</h3>
+        <p class="break-keep text-[14.5px] leading-[1.85] text-slate-600">가구 소득을 낮은 순서대로 나열했을 때 전체의 50% 지점에 위치한 값입니다. 소득 분포가 한쪽으로 치우쳐 있어도 가운데 값은 크게 흔들리지 않으므로, 소득 수준을 비교하는 기준선으로 쓰입니다.</p>
+      </div>
+      <div class="rounded-3xl border border-brand-200 bg-brand-50/60 p-6" data-aos="fade-up" data-aos-delay="80">
+        <span class="mb-3 inline-flex items-center gap-1.5 rounded-full bg-brand px-3 py-1 text-[11px] font-bold text-white">
+          <iconify-icon icon="heroicons:building-library" width="14" height="14"></iconify-icon>복지 제도
+        </span>
+        <h3 class="mb-2.5 break-keep text-[18px] font-bold">수급자를 정하는 기준 중위소득</h3>
+        <p class="mb-4 break-keep text-[14.5px] leading-[1.85] text-slate-700">통계청 조사 자료를 토대로 보건복지부 장관이 매년 고시하는 금액으로, 다음과 같은 제도에서 수급자를 정하는 잣대가 됩니다.</p>
+        <ul class="grid gap-2 text-[14.5px] text-slate-700">
+          <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="16" height="16"></iconify-icon><span class="break-keep">국민기초생활보장제도(생계·의료·주거·교육급여)</span></li>
+          <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="16" height="16"></iconify-icon><span class="break-keep">차상위계층 지원 사업, 한부모가족 지원 사업</span></li>
+          <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="16" height="16"></iconify-icon><span class="break-keep">각종 공공요금 감면, 청년·신혼부부 주거 지원 사업</span></li>
+        </ul>
+      </div>
+    </div>
+    <p class="mt-6 flex items-start gap-3 break-keep rounded-3xl bg-ink p-6 text-[15px] leading-[1.85] text-white" data-aos="fade-up">
+      <iconify-icon icon="heroicons:light-bulb" class="mt-0.5 shrink-0 text-brand-300" width="20" height="20"></iconify-icon>
+      <span>기준 중위소득은 <span class="font-semibold text-brand-300">우리 가구가 어떤 복지 혜택을 받을 수 있는지</span>를 가늠하는 기준선 역할을 합니다.</span>
+    </p>
+  </div>
+</article>
+
+<article id="s2" class="border-t border-slate-200 bg-slate-50">
+  <div class="mx-auto max-w-5xl px-5 py-14">
+    <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
+      <iconify-icon icon="heroicons:table-cells" width="14" height="14"></iconify-icon>02 / 금액표
+    </p>
+    <h2 class="mb-5 break-keep text-[26px] font-bold leading-snug tracking-tight sm:text-[32px]" data-aos="fade-up" data-aos-delay="60"><span data-year class="text-brand"></span> 가구원 수별 기준 중위소득 표</h2>
+    <p class="mb-7 max-w-2xl break-keep text-[15px] leading-[1.9] text-slate-700" data-aos="fade-up" data-aos-delay="100"><span data-year></span> 기준 중위소득은 1인 가구부터 6인 가구까지 고시되어 있습니다. 내 가구원 수를 고르면 해당 행이 강조됩니다.</p>
+
+    <div class="mb-5 flex flex-wrap items-center gap-2.5">
+      <div class="flex rounded-full border border-slate-200 bg-white p-1">
+        <button type="button" data-unit="month">월 소득</button>
+        <button type="button" data-unit="year">연 소득</button>
+      </div>
+      <div class="flex rounded-full border border-slate-200 bg-white p-1">
+        <button type="button" data-view="table">표</button>
+        <button type="button" data-view="card">카드</button>
+      </div>
+      <div class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5">
+        <iconify-icon icon="heroicons:user-group" class="text-slate-400" width="16" height="16"></iconify-icon>
+        <label for="hh-top" class="text-[13px] text-slate-500">내 가구원 수</label>
+        <select id="hh-top" class="rounded-full border-0 bg-transparent py-1 pl-1 pr-6 text-[14px] font-semibold text-ink focus:ring-0">
+          <option value="1">1인</option><option value="2">2인</option><option value="3">3인</option>
+          <option value="4" selected>4인</option><option value="5">5인</option><option value="6">6인</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="tableWrap" class="max-h-[460px] overflow-auto rounded-3xl border border-slate-200 bg-white" data-aos="fade-up">
+      <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-slate-200 bg-white/95 px-5 py-3.5 backdrop-blur">
+        <span class="text-[13px] font-semibold text-slate-500">가구원 수</span>
+        <span class="text-[13px] font-semibold text-slate-500" id="unitHeading">기준 중위소득 (월)</span>
+      </div>
+      <div id="tableBody"></div>
+    </div>
+    <div id="cardWrap" class="hidden grid gap-3 sm:grid-cols-2 lg:grid-cols-3"></div>
+
+    <p class="mt-4 break-keep text-[13px] text-slate-500" id="tableCaption"></p>
+    <a href="https://www.mohw.go.kr" target="_blank" rel="noopener" class="mt-5 inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">
+      보건복지부 고시 확인하기<iconify-icon icon="heroicons:arrow-top-right-on-square" width="15" height="15"></iconify-icon>
+    </a>
+  </div>
+</article>
+
+<article id="s3" class="border-t border-slate-200 bg-white">
+  <div class="mx-auto max-w-5xl px-5 py-14">
+    <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
+      <iconify-icon icon="heroicons:heart" width="14" height="14"></iconify-icon>03 / 복지 혜택
+    </p>
+    <h2 class="mb-5 break-keep text-[26px] font-bold leading-snug tracking-tight sm:text-[32px]" data-aos="fade-up" data-aos-delay="60">기준 중위소득과 복지 혜택의 관계</h2>
+    <p class="mb-8 max-w-2xl break-keep text-[15px] leading-[1.9] text-slate-700" data-aos="fade-up" data-aos-delay="100">복지 제도의 선정 기준은 기준 중위소득의 비율로 정해집니다. 특히 국민기초생활보장제도의 네 가지 급여는 서로 다른 비율을 기준으로 수급자를 선정합니다. 2027년에도 급여별 비율은 2026년과 동일합니다.</p>
+
+    <div class="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4" id="benefitTiles"></div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="rounded-3xl bg-slate-50 p-6" data-aos="fade-up">
+        <h3 class="mb-3.5 flex items-center gap-2 text-[17px] font-bold">
+          <iconify-icon icon="heroicons:squares-2x2" class="text-brand" width="18" height="18"></iconify-icon>다른 복지 사업에서의 활용
+        </h3>
+        <ul class="grid gap-2.5 text-[14.5px] text-slate-700">
+          <li class="flex gap-2.5"><iconify-icon icon="heroicons:building-office-2" class="mt-1 shrink-0 text-brand" width="16" height="16"></iconify-icon><span class="break-keep">LH 공공임대주택·행복주택 입주 자격 기준</span></li>
+          <li class="flex gap-2.5"><iconify-icon icon="heroicons:key" class="mt-1 shrink-0 text-brand" width="16" height="16"></iconify-icon><span class="break-keep">청년·신혼부부 주거비 지원 및 전월세 대출 지원</span></li>
+          <li class="flex gap-2.5"><iconify-icon icon="heroicons:hand-raised" class="mt-1 shrink-0 text-brand" width="16" height="16"></iconify-icon><span class="break-keep">지자체별 긴급 생계 지원금, 에너지 바우처, 돌봄 서비스</span></li>
+          <li class="flex gap-2.5"><iconify-icon icon="heroicons:users" class="mt-1 shrink-0 text-brand" width="16" height="16"></iconify-icon><span class="break-keep">한부모가족 지원, 아동 양육비 지원 사업</span></li>
+        </ul>
+      </div>
+      <div class="rounded-3xl border border-slate-200 p-6" data-aos="fade-up" data-aos-delay="80">
+        <h3 class="mb-3.5 flex items-center gap-2 text-[17px] font-bold">
+          <iconify-icon icon="heroicons:exclamation-triangle" class="text-brand" width="18" height="18"></iconify-icon>신청 전 확인할 점
+        </h3>
+        <p class="mb-4 break-keep text-[14.5px] leading-[1.85] text-slate-600">실제 선정에는 소득만이 아니라 재산의 소득환산액, 부양의무자 기준, 급여별 세부 요건이 함께 적용됩니다. 소득이 기준 비율 이하라도 재산 기준을 넘으면 제외될 수 있습니다.</p>
+        <a href="https://www.bokjiro.go.kr" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2.5 text-[13.5px] font-semibold text-white no-underline hover:bg-brand-600 hover:text-white">
+          복지로에서 서비스 확인<iconify-icon icon="heroicons:arrow-right" width="15" height="15"></iconify-icon>
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-4 flex items-start gap-3 rounded-3xl border border-slate-200 bg-slate-50/70 p-6" data-aos="fade-up">
+      <iconify-icon icon="heroicons:home-modern" class="mt-0.5 shrink-0 text-brand" width="20" height="20"></iconify-icon>
+      <p class="break-keep text-[14.5px] leading-[1.85] text-slate-700"><span class="font-semibold text-ink">소득만 보지 않아요 — 재산의 소득환산액</span><br>실제 수급자 선정에는 소득에 집이나 자동차 같은 재산을 일정 비율로 환산한 금액을 더한 <span class="font-semibold">소득인정액</span>을 사용합니다. 재산 기준은 대도시·중소도시·농어촌 등 지역별로 다르게 적용되므로, 정확한 금액은 복지로 모의계산이나 주민센터에서 확인하는 것이 가장 정확합니다.</p>
+    </div>
+  </div>
+</article>
+
+<article id="s4" class="border-t border-slate-200 bg-brand-50/50">
+  <div class="mx-auto max-w-5xl px-5 py-14">
+    <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
+      <iconify-icon icon="heroicons:variable" width="14" height="14"></iconify-icon>04 / 계산 방법
+    </p>
+    <h2 class="mb-8 break-keep text-[26px] font-bold leading-snug tracking-tight sm:text-[32px]" data-aos="fade-up" data-aos-delay="60">우리 가구 중위소득 비율 계산 방법</h2>
+    <ol class="mb-6 grid gap-3 sm:grid-cols-3">
+      <li class="rounded-3xl border border-brand-100 bg-white p-6" data-aos="fade-up">
+        <span class="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-brand text-white"><iconify-icon icon="heroicons:user-group" width="18" height="18"></iconify-icon></span>
+        <h3 class="mb-2 break-keep text-[17px] font-bold"><span class="mr-1.5 text-brand tabular-nums">01</span>가구원 수와 기준 금액 확인</h3>
+        <p class="break-keep text-[14px] leading-[1.85] text-slate-600">주민등록상 함께 사는 가족 수를 세고, 위 표에서 해당 가구원 수의 금액을 확인합니다.</p>
+      </li>
+      <li class="rounded-3xl border border-brand-100 bg-white p-6" data-aos="fade-up" data-aos-delay="80">
+        <span class="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-brand text-white"><iconify-icon icon="heroicons:banknotes" width="18" height="18"></iconify-icon></span>
+        <h3 class="mb-2 break-keep text-[17px] font-bold"><span class="mr-1.5 text-brand tabular-nums">02</span>가구 소득 합산</h3>
+        <p class="break-keep text-[14px] leading-[1.85] text-slate-600">근로·사업·연금 소득 등 가구원 전체의 세전 소득을 더합니다. 제도상으로는 재산의 소득환산액까지 더해 소득인정액이라 부릅니다.</p>
+      </li>
+      <li class="rounded-3xl border border-brand-100 bg-white p-6" data-aos="fade-up" data-aos-delay="160">
+        <span class="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-brand text-white"><iconify-icon icon="heroicons:calculator" width="18" height="18"></iconify-icon></span>
+        <h3 class="mb-2 break-keep text-[17px] font-bold"><span class="mr-1.5 text-brand tabular-nums">03</span>비율로 환산</h3>
+        <p class="break-keep text-[14px] leading-[1.85] text-slate-600">두 숫자를 나누어 백분율로 바꾸면 우리 가구의 중위소득 대비 비율이 나옵니다.</p>
+      </li>
+    </ol>
+    <div class="rounded-3xl bg-ink p-7 text-center" data-aos="zoom-in">
+      <p class="mb-2.5 flex items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-300">
+        <iconify-icon icon="heroicons:variable" width="14" height="14"></iconify-icon>계산식
+      </p>
+      <p class="break-keep text-[16px] font-semibold leading-relaxed text-white sm:text-[19px]">중위소득 비율(%) = 우리 가구 소득 ÷ 해당 가구원 수 기준 중위소득 × 100</p>
+    </div>
+  </div>
+</article>
+
+<article id="s5" class="bg-ink">
+  <div class="mx-auto max-w-5xl px-5 py-14">
+    <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-300 tabular-nums" data-aos="fade-up">
+      <iconify-icon icon="heroicons:calculator" width="14" height="14"></iconify-icon>05 / 계산기
+    </p>
+    <h2 class="mb-5 break-keep text-[26px] font-bold leading-snug tracking-tight text-white sm:text-[32px]" data-aos="fade-up" data-aos-delay="60"><span data-year class="text-brand-300"></span> 내 소득 분위 계산기</h2>
+    <p class="mb-8 max-w-2xl break-keep text-[15px] leading-[1.9] text-slate-300" data-aos="fade-up" data-aos-delay="100">가구원 수와 월 소득을 입력하면 <span data-year></span> 기준 중위소득과 비교해 우리 가구가 몇 퍼센트 수준인지, 어떤 급여의 선정 기준 안에 들어오는지 알려드립니다.</p>
+
+    <div class="rounded-3xl bg-white p-6 sm:p-8" data-aos="fade-up" data-aos-delay="120">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label for="calc-hh" class="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-slate-500">
+            <iconify-icon icon="heroicons:user-group" width="15" height="15"></iconify-icon>가구원 수
+          </label>
+          <select id="calc-hh" class="w-full rounded-2xl border-slate-300 py-3 text-[15px] font-semibold text-ink focus:border-brand focus:ring-brand">
+            <option value="1">1인 가구</option><option value="2">2인 가구</option><option value="3">3인 가구</option>
+            <option value="4" selected>4인 가구</option><option value="5">5인 가구</option><option value="6">6인 가구</option>
+          </select>
+        </div>
+        <div>
+          <label for="calc-income" class="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-slate-500">
+            <iconify-icon icon="heroicons:banknotes" width="15" height="15"></iconify-icon>가구 월 소득 (원, 세전 합산)
+          </label>
+          <input id="calc-income" type="text" inputmode="numeric" placeholder="예: 2,500,000" class="w-full rounded-2xl border-slate-300 py-3 text-[16px] font-semibold text-ink tabular-nums placeholder:font-normal placeholder:text-slate-400 focus:border-brand focus:ring-brand">
+        </div>
+      </div>
+      <div class="mt-5 flex flex-wrap gap-2.5">
+        <button type="button" id="calcBtn" class="inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-[15px] font-semibold text-white hover:bg-brand-600 hover:text-white active:bg-brand-700">
+          <iconify-icon icon="heroicons:calculator" width="18" height="18"></iconify-icon>결과 계산하기
+        </button>
+        <button type="button" id="resetBtn" class="inline-flex items-center gap-2 rounded-full border border-slate-300 px-5 py-3 text-[15px] font-semibold text-ink hover:bg-slate-50">
+          <iconify-icon icon="heroicons:arrow-path" width="18" height="18"></iconify-icon>다시 입력
+        </button>
+      </div>
+
+      <div id="calcResult" class="hidden mt-7 border-t border-slate-200 pt-7"></div>
+
+      <p class="mt-6 flex gap-2 break-keep text-[13px] leading-relaxed text-slate-500">
+        <iconify-icon icon="heroicons:information-circle" class="mt-0.5 shrink-0" width="15" height="15"></iconify-icon>
+        <span>계산 결과는 참고용이며, 실제 수급 여부는 재산의 소득환산액을 포함한 소득인정액 심사로 결정됩니다.</span>
+      </p>
+    </div>
+
+    <div class="mt-5 rounded-3xl border border-white/15 p-6" data-aos="fade-up">
+      <p class="mb-4 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-300">
+        <iconify-icon icon="heroicons:chart-bar" width="14" height="14"></iconify-icon>소득 구간 참고표
+      </p>
+      <dl class="grid gap-3">
+        <div class="flex items-baseline justify-between gap-5 border-b border-white/10 pb-3"><dt class="whitespace-nowrap text-[15px] font-semibold text-white tabular-nums">50% 미만</dt><dd class="break-keep text-right text-[14px] text-slate-300">저소득 구간 (대략 1~3분위 수준)</dd></div>
+        <div class="flex items-baseline justify-between gap-5 border-b border-white/10 pb-3"><dt class="whitespace-nowrap text-[15px] font-semibold text-white tabular-nums">50~100%</dt><dd class="break-keep text-right text-[14px] text-slate-300">중간 구간 (대략 4~6분위 수준)</dd></div>
+        <div class="flex items-baseline justify-between gap-5 border-b border-white/10 pb-3"><dt class="whitespace-nowrap text-[15px] font-semibold text-white tabular-nums">100~150%</dt><dd class="break-keep text-right text-[14px] text-slate-300">중상 구간 (대략 7~8분위 수준)</dd></div>
+        <div class="flex items-baseline justify-between gap-5"><dt class="whitespace-nowrap text-[15px] font-semibold text-white tabular-nums">150% 이상</dt><dd class="break-keep text-right text-[14px] text-slate-300">상대적 고소득 구간 (9~10분위 수준)</dd></div>
+      </dl>
+      <p class="mt-4 break-keep text-[12.5px] leading-relaxed text-slate-400">분위 구간은 이해를 돕기 위한 참고용 예시이며, 실제 통계청·기초생활보장제도에서 사용하는 분위 구간과는 다를 수 있습니다.</p>
+    </div>
+  </div>
+</article>
+
+<article id="s6" class="border-b border-slate-200 bg-white">
+  <div class="mx-auto max-w-5xl px-5 py-14">
+    <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
+      <iconify-icon icon="heroicons:question-mark-circle" width="14" height="14"></iconify-icon>06 / FAQ
+    </p>
+    <h2 class="mb-8 break-keep text-[26px] font-bold leading-snug tracking-tight sm:text-[32px]" data-aos="fade-up" data-aos-delay="60">자주 묻는 질문</h2>
+    <div class="grid gap-3">
+      <div class="rounded-3xl border border-slate-200 p-6" data-aos="fade-up">
+        <h3 class="mb-2.5 flex gap-2.5 break-keep text-[17px] font-bold"><iconify-icon icon="heroicons:chat-bubble-left-right" class="mt-0.5 shrink-0 text-brand" width="18" height="18"></iconify-icon>중위소득과 평균소득은 어떻게 다른가요?</h3>
+        <p class="break-keep text-[14.5px] leading-[1.9] text-slate-600">평균소득은 전체 소득을 인원수로 나눈 값이고, 중위소득은 소득 순으로 줄을 세웠을 때 가운데 값입니다. 고소득 가구가 많을수록 평균은 위로 끌려가므로, 중위소득이 일반적인 가구의 형편에 더 가깝습니다.</p>
+      </div>
+      <div class="rounded-3xl border border-slate-200 p-6" data-aos="fade-up" data-aos-delay="50">
+        <h3 class="mb-2.5 flex gap-2.5 break-keep text-[17px] font-bold"><iconify-icon icon="heroicons:chat-bubble-left-right" class="mt-0.5 shrink-0 text-brand" width="18" height="18"></iconify-icon>기준 중위소득은 매년 바뀌나요?</h3>
+        <p class="break-keep text-[14.5px] leading-[1.9] text-slate-600">네, 매년 바뀝니다. 보건복지부 중앙생활보장위원회 심의를 거쳐 다음 해에 적용할 기준 중위소득을 고시합니다. 2027년 기준은 2026년 7월 28일 제80차 회의에서 6.70% 인상으로 의결되었습니다.</p>
+      </div>
+      <div class="rounded-3xl border border-slate-200 p-6" data-aos="fade-up" data-aos-delay="100">
+        <h3 class="mb-2.5 flex gap-2.5 break-keep text-[17px] font-bold"><iconify-icon icon="heroicons:chat-bubble-left-right" class="mt-0.5 shrink-0 text-brand" width="18" height="18"></iconify-icon>중위소득 50% 이하면 모두 수급자가 되나요?</h3>
+        <p class="break-keep text-[14.5px] leading-[1.9] text-slate-600">그렇지 않습니다. 소득이 중위소득의 일정 비율 이하라도 재산의 소득환산액과 급여별 기준을 함께 보기 때문에, 소득만으로 수급 여부가 결정되지는 않습니다.</p>
+      </div>
+      <div class="rounded-3xl border border-slate-200 p-6" data-aos="fade-up" data-aos-delay="150">
+        <h3 class="mb-2.5 flex gap-2.5 break-keep text-[17px] font-bold"><iconify-icon icon="heroicons:chat-bubble-left-right" class="mt-0.5 shrink-0 text-brand" width="18" height="18"></iconify-icon>우리 집이 받을 수 있는 혜택을 한 번에 알 수 있나요?</h3>
+        <p class="break-keep text-[14.5px] leading-[1.9] text-slate-600">복지로의 복지 서비스 모의계산을 이용하면 소득·재산·가구 구성 정보를 입력해 받을 수 있는 사업을 한 번에 확인할 수 있습니다. 더 정확한 상담은 주민센터나 보건복지상담센터(129)를 이용하세요.</p>
+      </div>
+    </div>
+
+    <div class="mt-8 grid gap-3 sm:grid-cols-2" data-aos="fade-up">
+      <a href="tel:129" class="flex items-center gap-3 rounded-3xl border border-brand-200 bg-brand-50/60 px-5 py-4 text-[15px] font-semibold text-brand-700 no-underline hover:border-brand hover:bg-brand-50 hover:text-brand-700">
+        <iconify-icon icon="heroicons:phone-arrow-up-right" class="shrink-0" width="20" height="20"></iconify-icon>
+        <span class="break-keep">보건복지콜센터(129) 전화 연결하기</span>
+      </a>
+      <a href="https://www.bokjiro.go.kr" target="_blank" rel="noopener" class="flex items-center gap-3 rounded-3xl border border-slate-200 px-5 py-4 text-[15px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">
+        <iconify-icon icon="heroicons:map-pin" class="shrink-0 text-brand" width="20" height="20"></iconify-icon>
+        <span class="break-keep">복지로에서 우리 동네 복지서비스 찾기</span>
+        <iconify-icon icon="heroicons:arrow-top-right-on-square" class="ml-auto shrink-0 text-slate-400" width="16" height="16"></iconify-icon>
+      </a>
+    </div>
+
+    <div id="s7" class="mt-10 rounded-3xl bg-slate-50 p-7" data-aos="fade-up">
+      <p class="mb-4 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums">
+        <iconify-icon icon="heroicons:clipboard-document-check" width="14" height="14"></iconify-icon>07 / 오늘 내용 정리
+      </p>
+      <ul class="grid gap-3 text-[15px] text-slate-700">
+        <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="17" height="17"></iconify-icon><span class="break-keep">중위소득은 소득 순서에서 가운데 있는 값으로, 평균소득보다 체감 생활 수준에 가깝습니다.</span></li>
+        <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="17" height="17"></iconify-icon><span class="break-keep"><span data-year></span> 4인 가구 기준 중위소득은 월 <span data-median4-inline></span>, 1인 가구는 월 <span data-median1-inline></span>입니다.</span></li>
+        <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="17" height="17"></iconify-icon><span class="break-keep">기초생활보장 급여는 생계 32%, 의료 40%, 주거 48%, 교육 50%를 기준으로 선정됩니다.</span></li>
+        <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="17" height="17"></iconify-icon><span class="break-keep">우리 가구 비율은 가구 소득 ÷ 가구원 수별 기준 중위소득 × 100으로 계산합니다.</span></li>
+      </ul>
+      <div class="mt-6 flex flex-wrap gap-2.5">
+        <a href="#s5" class="inline-flex items-center gap-1.5 rounded-full bg-brand px-5 py-3 text-[14.5px] font-semibold text-white no-underline hover:bg-brand-600 hover:text-white">
+          <iconify-icon icon="heroicons:calculator" width="17" height="17"></iconify-icon>계산기 다시 사용하기
+        </a>
+        <a href="#s2" class="inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-white px-5 py-3 text-[14.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">
+          <iconify-icon icon="heroicons:table-cells" width="17" height="17"></iconify-icon>가구원 수별 표 보기
+        </a>
+      </div>
+    </div>
+  </div>
+</article>
+
+<footer class="bg-slate-50">
+  <div class="mx-auto grid max-w-5xl gap-4 px-5 py-12">
+    <p class="flex items-center gap-2 text-[15px] font-bold">
+      <iconify-icon icon="heroicons:document-text" class="text-brand" width="18" height="18"></iconify-icon>함께 보면 좋은 글
+    </p>
+    <ul class="grid gap-2 text-[14.5px] sm:grid-cols-3">
+      <li><a href="#s3" class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-ink no-underline hover:border-brand hover:text-brand"><iconify-icon icon="heroicons:arrow-right" width="15" height="15"></iconify-icon>기초생활수급자 생계급여 기준</a></li>
+      <li><a href="#s2" class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-ink no-underline hover:border-brand hover:text-brand"><iconify-icon icon="heroicons:arrow-right" width="15" height="15"></iconify-icon>국민연금 예상 수령액 계산</a></li>
+      <li><a href="#s5" class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 font-medium text-ink no-underline hover:border-brand hover:text-brand"><iconify-icon icon="heroicons:arrow-right" width="15" height="15"></iconify-icon>LH 공공임대 주거지원 정보</a></li>
+    </ul>
+    <p class="text-[12.5px] text-slate-500">© <span id="copyYear">2026</span> 중위소득 정보센터. 이 페이지의 정보는 참고용이며 법적 효력을 갖지 않습니다.</p>
+  </div>
+</footer>
+
+<script>
+// 2017~2027년 기준 중위소득 (월, 원) — 1인~6인 가구
+var MEDIAN_BY_YEAR = {
+  2017: [1652931, 2814449, 3626990, 4419014, 5175161, 6120311],
+  2018: [1672105, 2847097, 3676474, 4480497, 5242856, 6191307],
+  2019: [1707008, 2906528, 3751405, 4573248, 5361784, 6320544],
+  2020: [1757194, 2991980, 3875771, 4749174, 5525400, 6506368],
+  2021: [1827831, 3088079, 4028284, 4976208, 5642433, 6628603],
+  2022: [1944812, 3260085, 4255761, 5263732, 5883171, 6907004],
+  2023: [2077892, 3456155, 4560843, 5630077, 6164175, 7227981],
+  2024: [2228445, 3682609, 4840523, 5975935, 6521210, 7618369],
+  2025: [2392013, 3932658, 5025353, 6097773, 7108192, 8064805],
+  2026: [2564238, 4199292, 5287892, 6398542, 7475752, 8555952],
+  2027: [2736042, 4480645, 5718091, 6929885, 8063019, 9129201]
+};
+var YEARS = Object.keys(MEDIAN_BY_YEAR).map(Number).sort(function (a, b) { return b - a; });
+var LATEST = YEARS[0];
+var BENEFITS = [
+  { rate: 32, name: '생계급여', icon: 'heroicons:banknotes' },
+  { rate: 40, name: '의료급여', icon: 'heroicons:heart' },
+  { rate: 48, name: '주거급여', icon: 'heroicons:home-modern' },
+  { rate: 50, name: '교육급여', icon: 'heroicons:academic-cap' }
+];
+
+var state = { year: LATEST, unit: 'month', view: 'table', household: 4 };
+var fmt = function (n) { return n.toLocaleString('ko-KR'); };
+var UNIT = '<span class="text-[0.8em] font-semibold">원</span>';
+var won = function (n) { return fmt(n) + UNIT; };
+var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// 금액 카운트업 애니메이션
+function countUp(el, target, suffix, decimals) {
+  suffix = suffix === undefined ? UNIT : suffix;
+  decimals = decimals || 0;
+  var from = parseFloat(el.dataset.value || '0') || 0;
+  el.dataset.value = String(target);
+  var render = function (v) {
+    el.innerHTML = (decimals ? v.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : fmt(Math.round(v))) + suffix;
+  };
+  render(target); // 필수: 프레이밀이 없는 환경에서도 값은 보여야 함
+  if (REDUCED || from === target) { return; }
+  var start = null, dur = 700;
+  function step(t) {
+    if (start === null) start = t;
+    var p = Math.min(1, (t - start) / dur);
+    var e = 1 - Math.pow(1 - p, 3);
+    render(from + (target - from) * e);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+var $ = function (sel) { return document.querySelector(sel); };
+var $$ = function (sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); };
+
+var PILL_ON = 'rounded-full bg-brand px-4 py-2 text-[13.5px] font-semibold text-white';
+var PILL_OFF = 'rounded-full px-4 py-2 text-[13.5px] font-semibold text-slate-500 hover:text-ink';
+var YEAR_ON = 'rounded-full bg-brand px-6 py-3 text-[15px] font-semibold text-white tabular-nums shadow-md shadow-brand-200';
+var YEAR_OFF = 'rounded-full border border-slate-300 bg-white px-6 py-3 text-[15px] font-semibold text-slate-600 tabular-nums hover:border-brand hover:text-brand';
+
+function medians() { return MEDIAN_BY_YEAR[state.year] || MEDIAN_BY_YEAR[LATEST]; }
+
+function renderYearControls() {
+  var sel = $('#year-select');
+  if (!sel.options.length) {
+    YEARS.forEach(function (y) {
+      var o = document.createElement('option');
+      o.value = String(y); o.textContent = y + '년';
+      sel.appendChild(o);
+    });
+  }
+  sel.value = String(state.year);
+  $$('[data-year-pick]').forEach(function (b) {
+    b.className = Number(b.dataset.yearPick) === state.year ? YEAR_ON : YEAR_OFF;
+  });
+  $$('[data-year]').forEach(function (el) { el.textContent = state.year + '년'; });
+}
+
+function flashYear() {
+  if (REDUCED) return;
+  $$('[data-year]').forEach(function (el) {
+    el.classList.remove('year-flash');
+    void el.offsetWidth;
+    el.classList.add('year-flash');
+  });
+}
+
+function renderAmounts() {
+  var m = medians();
+  $$('[data-median4], [data-median4-inline]').forEach(function (el) { countUp(el, m[3]); });
+  $$('[data-median1], [data-median1-inline]').forEach(function (el) { countUp(el, m[0]); });
+}
+
+function renderTable() {
+  var m = medians();
+  var yearly = state.unit === 'year';
+  var body = $('#tableBody');
+  var cards = $('#cardWrap');
+  body.innerHTML = '';
+  cards.innerHTML = '';
+
+  m.forEach(function (base, i) {
+    var mine = i + 1 === state.household;
+    var value = yearly ? base * 12 : base;
+    var row = document.createElement('div');
+    row.className = 'flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4 ' + (mine ? 'bg-brand-50' : 'hover:bg-slate-50');
+    row.innerHTML = '<span class="flex items-center gap-2 text-[15px] font-medium">' +
+      '<iconify-icon icon="heroicons:users" class="' + (mine ? 'text-brand' : 'text-slate-300') + '" width="16" height="16"></iconify-icon>' +
+      (i + 1) + '인 가구</span>' +
+      '<span data-amt class="tabular-nums whitespace-nowrap ' + (mine ? 'text-[20px] font-bold text-brand-700' : 'text-[17px] font-semibold text-ink') + '"></span>';
+    body.appendChild(row);
+    countUp(row.querySelector('[data-amt]'), value);
+
+    var card = document.createElement('div');
+    card.className = mine ? 'rounded-3xl bg-brand p-5 text-white' : 'rounded-3xl border border-slate-200 bg-white p-5';
+    card.innerHTML = '<p class="mb-1.5 text-[13px] font-medium ' + (mine ? 'text-brand-100' : 'text-slate-500') + '">' + (i + 1) + '인 가구</p>' +
+      '<p data-amt class="text-[24px] font-bold leading-tight tracking-tight tabular-nums"></p>' +
+      '<p class="mt-2 text-[11.5px] font-semibold ' + (mine ? 'text-brand-100' : 'text-slate-400') + '">' + (mine ? '내 가구' : (yearly ? '연 소득 기준' : '월 소득 기준')) + '</p>';
+    cards.appendChild(card);
+    countUp(card.querySelector('[data-amt]'), value);
+  });
+
+  $('#unitHeading').textContent = yearly ? '기준 중위소득 (연)' : '기준 중위소득 (월)';
+  $('#tableCaption').textContent = state.year + '년 기준 중위소득 ' + (yearly ? '연 소득 환산액 (월 금액 × 12)' : '월 소득 기준') + ' · 단위 원. 7인 이상 가구 금액은 연말 보건복지부 고시에서 확인하세요.';
+
+  $$('[data-unit]').forEach(function (b) { b.className = b.dataset.unit === state.unit ? PILL_ON : PILL_OFF; });
+  $$('[data-view]').forEach(function (b) { b.className = b.dataset.view === state.view ? PILL_ON : PILL_OFF; });
+  $('#tableWrap').classList.toggle('hidden', state.view !== 'table');
+  $('#cardWrap').classList.toggle('hidden', state.view !== 'card');
+  $('#cardWrap').classList.toggle('grid', state.view === 'card');
+}
+
+function renderBenefitTiles() {
+  var m = medians();
+  var wrap = $('#benefitTiles');
+  wrap.innerHTML = '';
+  BENEFITS.forEach(function (b, i) {
+    var el = document.createElement('div');
+    el.className = 'overflow-hidden rounded-3xl border border-slate-200';
+    el.setAttribute('data-aos', 'zoom-in');
+    el.setAttribute('data-aos-delay', String(i * 60));
+    el.innerHTML = '<div class="px-5 pb-4 pt-5">' +
+      '<iconify-icon icon="' + b.icon + '" class="mb-3 text-brand" width="22" height="22"></iconify-icon>' +
+      '<p class="text-[30px] font-bold leading-none tracking-tight tabular-nums">' + b.rate + '%</p>' +
+      '<p class="mt-1.5 text-[14px] font-semibold">' + b.name + '</p>' +
+      '<p class="mt-1 break-keep text-[12.5px] leading-relaxed text-slate-500">4인 가구 ' + won(Math.round(m[3] * b.rate / 100)) + ' 이하</p>' +
+      '</div><div class="h-2 bg-gradient-to-r from-brand-200 to-brand"></div>';
+    wrap.appendChild(el);
+  });
+}
+
+function calculate() {
+  var digits = ($('#calc-income').value || '').replace(/[^0-9]/g, '');
+  var box = $('#calcResult');
+  if (!digits) {
+    window.alert('가구 월 소득을 입력해 주세요.\n(세전 기준, 가구원 전체 합산 금액)');
+    box.classList.add('hidden');
+    box.innerHTML = '';
+    $('#calc-income').focus();
+    return;
+  }
+  var income = parseInt(digits, 10);
+  var h = parseInt($('#calc-hh').value, 10);
+  var median = medians()[h - 1];
+  var pct = (income / median) * 100;
+
+  var list = BENEFITS.filter(function (b) { return pct <= b.rate; })
+    .map(function (b) { return b.name + ' (' + b.rate + '% 이하)'; });
+  if (!list.length) list = ['기초생활보장 4대 급여의 소득 기준을 넘습니다. 지자체·주거 지원 사업은 별도 기준을 확인하세요.'];
+
+  var band;
+  if (pct < 50) band = '중위소득 50% 미만 — 저소득 구간(대략 1~3분위 수준)입니다.';
+  else if (pct <= 100) band = '중위소득 50~100% — 중간 구간(대략 4~6분위 수준)입니다.';
+  else if (pct <= 150) band = '중위소득 100~150% — 중상 구간(대략 7~8분위 수준)입니다.';
+  else band = '중위소득 150% 초과 — 상대적 고소득 구간(9~10분위 수준)입니다.';
+
+  box.innerHTML = '<div class="grid gap-3 sm:grid-cols-2">' +
+    '<div class="rounded-3xl bg-brand p-6 text-white">' +
+      '<p class="mb-1.5 flex items-center gap-1.5 text-[13px] text-brand-100"><iconify-icon icon="heroicons:chart-bar" width="15" height="15"></iconify-icon>' + state.year + '년 기준 중위소득 대비</p>' +
+      '<p data-pct class="text-[40px] font-bold leading-none tracking-tight tabular-nums"></p>' +
+    '</div>' +
+    '<div class="rounded-3xl bg-slate-50 p-6">' +
+      '<p class="mb-1.5 text-[13px] text-slate-500">' + h + '인 가구 기준 중위소득</p>' +
+      '<p data-amt class="text-[24px] font-bold leading-tight tracking-tight tabular-nums"></p>' +
+    '</div></div>' +
+    '<p class="mt-5 break-keep text-[16px] font-semibold leading-relaxed">' + band + '</p>' +
+    '<p class="mb-3 mt-6 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700"><iconify-icon icon="heroicons:check-badge" width="15" height="15"></iconify-icon>선정 기준 안에 들어오는 급여</p>' +
+    '<ul class="grid gap-2 text-[14.5px] text-slate-700">' +
+      list.map(function (t) {
+        return '<li class="flex gap-2.5 rounded-2xl bg-brand-50 px-4 py-3"><iconify-icon icon="heroicons:check-circle" class="mt-0.5 shrink-0 text-brand" width="18" height="18"></iconify-icon><span class="break-keep">' + t + '</span></li>';
+      }).join('') +
+    '</ul>';
+  box.classList.remove('hidden');
+  countUp(box.querySelector('[data-pct]'), pct, '<span class="text-[0.8em] font-semibold">%</span>', 1);
+  countUp(box.querySelector('[data-amt]'), median);
+  nudgeAos();
+}
+
+function resetCalc() {
+  $('#calc-income').value = '';
+  $('#calcResult').classList.add('hidden');
+  $('#calcResult').innerHTML = '';
+}
+
+function renderAll() {
+  renderYearControls();
+  renderAmounts();
+  renderTable();
+  renderBenefitTiles();
+  resetCalc();
+  nudgeAos();
+}
+
+function nudgeAos() {
+  setTimeout(function () {
+    if (window.AOS) window.AOS.refresh();
+    window.dispatchEvent(new Event('scroll'));
+  }, 80);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  $('#copyYear').textContent = new Date().getFullYear();
+
+  $('#year-select').addEventListener('change', function (e) {
+    state.year = parseInt(e.target.value, 10);
+    renderAll();
+    flashYear();
+  });
+  $$('[data-year-pick]').forEach(function (b) {
+    b.addEventListener('click', function () { state.year = Number(b.dataset.yearPick); renderAll(); flashYear(); });
+  });
+  $$('[data-unit]').forEach(function (b) {
+    b.addEventListener('click', function () { state.unit = b.dataset.unit; renderTable(); });
+  });
+  $$('[data-view]').forEach(function (b) {
+    b.addEventListener('click', function () { state.view = b.dataset.view; renderTable(); nudgeAos(); });
+  });
+  $('#hh-top').addEventListener('change', function (e) {
+    state.household = parseInt(e.target.value, 10);
+    $('#calc-hh').value = e.target.value;
+    renderTable(); resetCalc();
+  });
+  $('#calc-hh').addEventListener('change', function (e) {
+    state.household = parseInt(e.target.value, 10);
+    $('#hh-top').value = e.target.value;
+    renderTable(); resetCalc();
+  });
+  $('#calc-income').addEventListener('input', function (e) {
+    var digits = e.target.value.replace(/[^0-9]/g, '');
+    e.target.value = digits ? parseInt(digits, 10).toLocaleString('ko-KR') : '';
+  });
+  $('#calcBtn').addEventListener('click', calculate);
+  $('#resetBtn').addEventListener('click', resetCalc);
+
+  window.addEventListener('hashchange', nudgeAos);
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (a) nudgeAos();
+  }, true);
+
+  renderAll();
+
+  var topBtn = document.getElementById('to-top');
+  if (topBtn) {
+    var toggleTop = function () {
+      if (window.scrollY > 480) topBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-3');
+      else topBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-3');
+    };
+    window.addEventListener('scroll', toggleTop, { passive: true });
+    toggleTop();
+    topBtn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+    });
+  }
+
+  var tries = 0;
+  (function initAos() {
+    if (window.AOS) {
+      window.AOS.init({ duration: 650, easing: 'ease-out-cubic', once: true, offset: 40 });
+      // 어니메이션 프레이밀이 안 돌아오는 환경(백그라운드 탭, 인앨 보기 등)에서는 숨김 해제
+      var framed = false;
+      requestAnimationFrame(function () { framed = true; });
+      setTimeout(function () {
+        if (!framed) $$('[data-aos]').forEach(function (el) { el.removeAttribute('data-aos'); });
+      }, 400);
+      return;
+    }
+    if (++tries > 40) {
+      $$('[data-aos]').forEach(function (el) { el.removeAttribute('data-aos'); });
+      return;
+    }
+    setTimeout(initAos, 100);
+  })();
+});
+</script>
+<button id="share-btn" type="button" aria-label="이 페이지 공유하기" class="fixed bottom-24 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-brand text-white shadow-lg ring-1 ring-brand-700/30 transition-all duration-300 hover:bg-brand-600">
+  <iconify-icon icon="heroicons:share" width="20" height="20"></iconify-icon>
+</button>
+<div id="share-toast" class="fixed bottom-[9.5rem] right-6 z-50 hidden rounded-full bg-ink px-4 py-2 text-[13px] font-semibold text-white shadow-lg">링크를 복사했어요</div>
+<button id="to-top" type="button" aria-label="맨 위로 이동" class="fixed bottom-6 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-white text-slate-700 shadow-lg ring-1 ring-slate-900/10 transition-all duration-300 opacity-0 pointer-events-none translate-y-3 hover:bg-[#0d6efd] hover:text-white hover:ring-[#0d6efd]">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18"></path></svg>
+</button>
+<script>
+(function () {
+  var btn = document.getElementById('share-btn');
+  var toast = document.getElementById('share-toast');
+  if (!btn) return;
+
+  function showToast(msg) {
+    toast.textContent = msg || '링크를 복사했어요';
+    toast.classList.remove('hidden');
+    setTimeout(function () { toast.classList.add('hidden'); }, 1800);
+  }
+
+  function legacyCopy(text) {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-1000px';
+      ta.style.left = '-1000px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast(ok ? '링크를 복사했어요' : '주소창의 링크를 복사해 주세요');
+    } catch (e) {
+      showToast('주소창의 링크를 복사해 주세요');
+    }
+  }
+
+  function copyLink(url) {
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+      navigator.clipboard.writeText(url).then(function () {
+        showToast('링크를 복사했어요');
+      }).catch(function () {
+        legacyCopy(url);
+      });
+    } else {
+      legacyCopy(url);
+    }
+  }
+
+  btn.addEventListener('click', function () {
+    var url = location.href;
+    try {
+      if (navigator.share && window.isSecureContext) {
+        navigator.share({
+          title: document.title,
+          text: '2027년 기준 중위소득, 가구원 수별 표와 소득 분위 계산기',
+          url: url
+        }).catch(function () { /* 사용자가 취소한 경우 등은 무시 */ });
+        return;
+      }
+      copyLink(url);
+    } catch (e) {
+      copyLink(url);
+    }
+  });
+})();
+</script>
 </body>
 </html>
