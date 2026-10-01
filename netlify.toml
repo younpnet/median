@@ -1,0 +1,5 @@
+# netlify.toml — median.younp.net
+# Netlify가 배포할 때마다 npm install 후 tailwind.css를 자동으로 빌드합니다.
+[build]
+  command = "npm install && npm run build:css"
+  publish = "."

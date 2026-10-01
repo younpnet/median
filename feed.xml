@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- feed.xml v1 (2026-09-30) — median.younp.net -->
+<rss version="2.0">
+  <channel>
+    <title>중위소득 정보센터</title>
+    <link>https://median.younp.net/</link>
+    <description>기준 중위소득표, 급여별 선정기준, 소득 분위 계산기</description>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 30 Sep 2026 00:00:00 +0900</lastBuildDate>
+
+    <item>
+      <title>2027년 기준 중위소득 완전 정리</title>
+      <link>https://median.younp.net/</link>
+      <guid>https://median.younp.net/</guid>
+      <pubDate>Wed, 23 Sep 2026 00:00:00 +0900</pubDate>
+      <description>가구원 수별 기준 중위소득표, 생계·의료·주거·교육급여 선정 기준, 소득 분위 계산기</description>
+    </item>
+    <item>
+      <title>1인 가구 2027년 기준 중위소득</title>
+      <link>https://median.younp.net/household-1.html</link>
+      <guid>https://median.younp.net/household-1.html</guid>
+      <pubDate>Wed, 30 Sep 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>2인 가구 2027년 기준 중위소득</title>
+      <link>https://median.younp.net/household-2.html</link>
+      <guid>https://median.younp.net/household-2.html</guid>
+      <pubDate>Wed, 30 Sep 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>3인 가구 2027년 기준 중위소득</title>
+      <link>https://median.younp.net/household-3.html</link>
+      <guid>https://median.younp.net/household-3.html</guid>
+      <pubDate>Wed, 30 Sep 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>4인 가구 2027년 기준 중위소득</title>
+      <link>https://median.younp.net/household-4.html</link>
+      <guid>https://median.younp.net/household-4.html</guid>
+      <pubDate>Wed, 30 Sep 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>5인 가구 2027년 기준 중위소득</title>
+      <link>https://median.younp.net/household-5.html</link>
+      <guid>https://median.younp.net/household-5.html</guid>
+      <pubDate>Wed, 30 Sep 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>6인 가구 2027년 기준 중위소득</title>
+      <link>https://median.younp.net/household-6.html</link>
+      <guid>https://median.younp.net/household-6.html</guid>
+      <pubDate>Wed, 30 Sep 2026 00:00:00 +0900</pubDate>
+    </item>
+  </channel>
+</rss>

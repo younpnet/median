@@ -8,6 +8,18 @@ v3 (2026-09-23): "함께 보면 좋은 글" 목록을 하드코딩에서 분리 
                  fetch로 불러와 렌더링. index.html을 안 건드리고 related-posts.json만 수정하면
                  관련 글 목록을 관리할 수 있음. JSON이 없거나 로드 실패 시 섹션은 자동으로 숨김
 v4 (2026-09-23): footer 저작권 문구 옆에 개인정보처리방침(privacy.html) 링크 추가, privacy.html 신규 작성
+v5 (2026-09-30): SEO 보완 — 계산기에 WebApplication 구조화 데이터 추가. robots.txt, sitemap.xml 신규 작성
+                 (저장소 루트에 같이 올려야 함)
+v6 (2026-09-30): URL 공유형 계산기 — 계산 결과를 ?year=&hh=&income= 파라미터로 주소창에 반영(history.replaceState),
+                 결과 박스에 "이 결과 링크 복사" 버튼 추가, 공유 링크로 들어오면 자동으로 값 복원 + 계산 + 스크롤 이동
+v7 (2026-09-30): Tailwind Play CDN 제거, Tailwind CLI 빌드 체제로 전환. package.json/tailwind.config.js/
+                 src/input.css/netlify.toml 신규 작성 — 배포 시 자동으로 /tailwind.css가 생성됨(저장소에는 안 올림)
+v8 (2026-09-30): PWA 지원 추가 — manifest.json, service-worker.js, 아이콘(icons/icon-192.png, icon-512.png,
+                 apple-touch-icon.png) 신규 작성. 홈 화면에 추가 가능해지고 오프라인에서도 기본 페이지 열림
+v9 (2026-09-30): ⚠️데이터 오류 수정 — 2026년 3·4·5인 가구 기준 중위소득이 실제 보건복지부 고시값과 달랐음
+                 (예: 4인 6,398,542원 → 6,494,738원으로 정정). 가구원수별 상세 페이지(household-1~6.html)
+                 신규 작성 및 표 섹션에 링크 추가. related-posts.json/sitemap.xml/service-worker.js도 연동
+v10 (2026-09-30): feed.xml(RSS) 신규 작성, head에 alternate 링크 추가
 -->
 <!DOCTYPE html>
 <html lang="ko">
@@ -17,6 +29,7 @@ v4 (2026-09-23): footer 저작권 문구 옆에 개인정보처리방침(privacy
 <title>2027년 기준 중위소득 완전 정리 | 가구원 수별 표·복지 혜택·소득 분위 계산기</title>
 <meta name="description" content="2027년 기준 중위소득 가구원 수별 금액표(1~6인), 생계·의료·주거·교육급여 선정 기준, 소득 분위 계산기를 한 번에 확인하세요. 2017~2027년 연도별 기준도 제공합니다.">
 <link rel="canonical" href="https://median.younp.net">
+<link rel="alternate" type="application/rss+xml" title="중위소득 정보센터" href="/feed.xml">
 <meta name="robots" content="index,follow">
 <meta property="og:type" content="website">
 <meta property="og:title" content="2027년 기준 중위소득 완전 정리 | 가구원 수별 표·소득 분위 계산기">
@@ -33,40 +46,17 @@ v4 (2026-09-23): footer 저작권 문구 옆에 개인정보처리방침(privacy
 <meta name="twitter:description" content="가구원 수별 기준 중위소득 표와 소득 분위 계산기.">
 <meta name="twitter:image" content="https://median.younp.net/og-image.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230d6efd'/%3E%3Cpath d='M28 66 V44 M50 66 V30 M72 66 V52' stroke='white' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="theme-color" content="#0d6efd">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="중위소득센터">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
-<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link rel="stylesheet" href="/tailwind.css">
 <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: { brand: { 50: '#eef5ff', 100: '#dbe9ff', 200: '#bdd6ff', 300: '#90b9ff', 400: '#5b95ff', DEFAULT: '#0d6efd', 500: '#0d6efd', 600: '#0b5ed7', 700: '#0a4fb3', 800: '#093f8c', 900: '#0a2f66' }, ink: { DEFAULT: '#0b1220', 800: '#111a2b', 700: '#1b2536' } },
-        fontFamily: { sans: ['Pretendard Variable', 'Pretendard', 'system-ui', 'sans-serif'] },
-      },
-    },
-  };
-</script>
-<style>
-  body { margin: 0; background: #fff; color: #0b1220; font-family: 'Pretendard Variable', Pretendard, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-  a:not([class]) { color: #0d6efd; }
-  a:not([class]):hover { color: #0b5ed7; }
-  :focus-visible { outline: 2px solid #0d6efd; outline-offset: 2px; }
-  ::selection { background: rgba(13,110,253,0.18); }
-  iconify-icon { display: inline-block; vertical-align: -0.125em; }
-  html { scroll-behavior: smooth; overflow-x: hidden; }
-  [id] { scroll-margin-top: 112px; }
-  .nav-scroll { scrollbar-width: none; }
-  .nav-scroll::-webkit-scrollbar { display: none; }
-  [data-aos].aos-animate { opacity: 1 !important; transform: none !important; }
-  @keyframes yearFlash { 0% { background-size: 0% 2px; } 100% { background-size: 100% 2px; } }
-  [data-year] { background-image: linear-gradient(currentColor, currentColor); background-repeat: no-repeat; background-position: 0 100%; background-size: 100% 2px; padding-bottom: 0.14em; }
-  .year-flash { animation: yearFlash 700ms ease-out; }
-  :where(h1, h2, h3):has([data-year]) { line-height: 1.4 !important; }
-  :where(p, li, div, td, th):has(> [data-year]) { line-height: 1.75; }
-  h1 .year-em { color: #0d6efd; }
-</style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -95,6 +85,19 @@ v4 (2026-09-23): footer 저작권 문구 옆에 개인정보처리방침(privacy
       { "@type": "ListItem", "position": 2, "name": "2027년 기준 중위소득 완전 정리", "item": "https://median.younp.net" }
     ]
   }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "중위소득 소득 분위 계산기",
+  "url": "https://median.younp.net/#s5",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires JavaScript",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+  "description": "가구원 수와 월 소득을 입력하면 기준 중위소득 대비 몇 %에 해당하는지 즉시 계산해주는 무료 웹 계산기입니다."
 }
 </script>
 </head>
@@ -265,6 +268,19 @@ v4 (2026-09-23): footer 저작권 문구 옆에 개인정보처리방침(privacy
     <div id="cardWrap" class="hidden grid gap-3 sm:grid-cols-2 lg:grid-cols-3"></div>
 
     <p class="mt-4 break-keep text-[13px] text-slate-500" id="tableCaption"></p>
+
+    <div class="mt-6 rounded-3xl border border-slate-200 bg-white p-5" data-aos="fade-up">
+      <p class="mb-3 flex items-center gap-1.5 text-[12.5px] font-semibold text-slate-500"><iconify-icon icon="heroicons:document-text" width="14" height="14"></iconify-icon>가구원 수별로 더 자세히 보기 (최근 5개년 추이 · 급여별 기준)</p>
+      <div class="flex flex-wrap gap-2">
+        <a href="household-1.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">1인 가구</a>
+        <a href="household-2.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">2인 가구</a>
+        <a href="household-3.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">3인 가구</a>
+        <a href="household-4.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">4인 가구</a>
+        <a href="household-5.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">5인 가구</a>
+        <a href="household-6.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">6인 가구</a>
+      </div>
+    </div>
+
     <a href="https://www.mohw.go.kr" target="_blank" rel="noopener" class="mt-5 inline-flex items-center gap-1.5 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">
       보건복지부 고시 확인하기<iconify-icon icon="heroicons:arrow-top-right-on-square" width="15" height="15"></iconify-icon>
     </a>
@@ -500,7 +516,7 @@ var MEDIAN_BY_YEAR = {
   2023: [2077892, 3456155, 4560843, 5630077, 6164175, 7227981],
   2024: [2228445, 3682609, 4840523, 5975935, 6521210, 7618369],
   2025: [2392013, 3932658, 5025353, 6097773, 7108192, 8064805],
-  2026: [2564238, 4199292, 5287892, 6398542, 7475752, 8555952],
+  2026: [2564238, 4199292, 5359036, 6494738, 7556719, 8555952],
   2027: [2736042, 4480645, 5718091, 6929885, 8063019, 9129201]
 };
 var YEARS = Object.keys(MEDIAN_BY_YEAR).map(Number).sort(function (a, b) { return b - a; });
@@ -513,6 +529,17 @@ var BENEFITS = [
 ];
 
 var state = { year: LATEST, unit: 'month', view: 'table', household: 4 };
+
+// 공유 링크로 들어온 경우 URL 파라미터(year, hh)를 초기 상태에 반영
+(function applyUrlParamsToInitialState() {
+  try {
+    var params = new URLSearchParams(location.search);
+    var y = parseInt(params.get('year'), 10);
+    if (YEARS.indexOf(y) !== -1) state.year = y;
+    var hh = parseInt(params.get('hh'), 10);
+    if (hh >= 1 && hh <= 6) state.household = hh;
+  } catch (e) { /* URLSearchParams 미지원 브라우저는 기본값 사용 */ }
+})();
 var fmt = function (n) { return n.toLocaleString('ko-KR'); };
 var UNIT = '<span class="text-[0.8em] font-semibold">원</span>';
 var won = function (n) { return fmt(n) + UNIT; };
@@ -638,6 +665,48 @@ function renderBenefitTiles() {
   });
 }
 
+function updateCalcShareUrl(h, income) {
+  try {
+    var params = new URLSearchParams();
+    params.set('year', String(state.year));
+    params.set('hh', String(h));
+    params.set('income', String(income));
+    var newUrl = location.pathname + '?' + params.toString() + '#s5';
+    history.replaceState(null, '', newUrl);
+  } catch (e) { /* 히스토리 API 실패해도 계산 결과 자체는 정상 동작 */ }
+}
+
+function copyCalcLink(msgEl) {
+  var url = location.href;
+  function done(ok) {
+    if (!msgEl) return;
+    msgEl.textContent = ok ? '링크를 복사했어요!' : '주소창의 링크를 복사해 주세요';
+    setTimeout(function () { msgEl.textContent = ''; }, 2200);
+  }
+  function legacy() {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = url;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      done(ok);
+    } catch (e) { done(false); }
+  }
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+      navigator.clipboard.writeText(url).then(function () { done(true); }).catch(legacy);
+    } else {
+      legacy();
+    }
+  } catch (e) { legacy(); }
+}
+
 function calculate() {
   var digits = ($('#calc-income').value || '').replace(/[^0-9]/g, '');
   var box = $('#calcResult');
@@ -678,10 +747,20 @@ function calculate() {
       list.map(function (t) {
         return '<li class="flex gap-2.5 rounded-2xl bg-brand-50 px-4 py-3"><iconify-icon icon="heroicons:check-circle" class="mt-0.5 shrink-0 text-brand" width="18" height="18"></iconify-icon><span class="break-keep">' + t + '</span></li>';
       }).join('') +
-    '</ul>';
+    '</ul>' +
+    '<div class="mt-6 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-5">' +
+      '<button type="button" id="calcShareBtn" class="inline-flex items-center gap-1.5 rounded-full border border-slate-300 px-4 py-2.5 text-[13.5px] font-semibold text-ink hover:border-brand hover:text-brand">' +
+        '<iconify-icon icon="heroicons:link" width="15" height="15"></iconify-icon>이 결과 링크 복사' +
+      '</button>' +
+      '<span id="calcShareMsg" class="text-[12.5px] text-slate-500"></span>' +
+    '</div>';
   box.classList.remove('hidden');
   countUp(box.querySelector('[data-pct]'), pct, '<span class="text-[0.8em] font-semibold">%</span>', 1);
   countUp(box.querySelector('[data-amt]'), median);
+  updateCalcShareUrl(h, income);
+  var shareBtn = box.querySelector('#calcShareBtn');
+  var shareMsg = box.querySelector('#calcShareMsg');
+  if (shareBtn) shareBtn.addEventListener('click', function () { copyCalcLink(shareMsg); });
   nudgeAos();
 }
 
@@ -748,6 +827,27 @@ document.addEventListener('DOMContentLoaded', function () {
   }, true);
 
   renderAll();
+
+  // 공유 링크(?hh=4&income=3200000)로 들어온 경우 계산기 값을 복원하고 자동 계산
+  (function restoreCalcFromUrl() {
+    try {
+      var params = new URLSearchParams(location.search);
+      var hh = parseInt(params.get('hh'), 10);
+      if (hh >= 1 && hh <= 6) {
+        $('#calc-hh').value = String(hh);
+        $('#hh-top').value = String(hh);
+      }
+      var incomeParam = params.get('income');
+      if (incomeParam && /^[0-9]+$/.test(incomeParam)) {
+        $('#calc-income').value = parseInt(incomeParam, 10).toLocaleString('ko-KR');
+        calculate();
+        setTimeout(function () {
+          var target = document.getElementById('s5');
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+      }
+    } catch (e) { /* 파라미터 없거나 잘못된 값이면 그냥 기본 화면으로 둠 */ }
+  })();
 
   var topBtn = document.getElementById('to-top');
   if (topBtn) {
@@ -849,6 +949,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 })();
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/service-worker.js').catch(function () {
+      /* 서비스 워커 등록 실패해도 페이지 이용에는 지장 없음 */
+    });
+  });
+}
 </script>
 </body>
 </html>

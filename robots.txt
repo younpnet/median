@@ -1,0 +1,5 @@
+# robots.txt v1 (2026-09-30) — median.younp.net
+User-agent: *
+Allow: /
+
+Sitemap: https://median.younp.net/sitemap.xml
