@@ -20,20 +20,23 @@ v9 (2026-09-30): ⚠️데이터 오류 수정 — 2026년 3·4·5인 가구 기
                  (예: 4인 6,398,542원 → 6,494,738원으로 정정). 가구원수별 상세 페이지(household-1~6.html)
                  신규 작성 및 표 섹션에 링크 추가. related-posts.json/sitemap.xml/service-worker.js도 연동
 v10 (2026-09-30): feed.xml(RSS) 신규 작성, head에 alternate 링크 추가
+v11 (2026-10-06): ⚠️데이터 전면 검증 — 2017~2024년 3·4·5인 가구 기준 중위소득을 보건복지부 고시값으로 정정,
+                 급여별 선정 비율을 연도별(2017~2027)로 분리(기존엔 전 연도에 32/40/48/50% 적용).
+                 홈 제목·메타·H1 연도 중립화, 연도별 페이지(year-2027/2026)·역대 추이(history) 링크 추가
 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>2027년 기준 중위소득 완전 정리 | 가구원 수별 표·복지 혜택·소득 분위 계산기</title>
-<meta name="description" content="2027년 기준 중위소득 가구원 수별 금액표(1~6인), 생계·의료·주거·교육급여 선정 기준, 소득 분위 계산기를 한 번에 확인하세요. 2017~2027년 연도별 기준도 제공합니다.">
+<title>기준 중위소득 완전 정리 | 가구원 수별 표·급여 선정기준·소득 분위 계산기</title>
+<meta name="description" content="가구원 수별 기준 중위소득 표(2017~2027년), 생계·의료·주거·교육급여 선정 기준, 내 소득이 중위소득 몇 %인지 알려주는 소득 분위 계산기를 한 번에 확인하세요.">
 <link rel="canonical" href="https://median.younp.net">
 <link rel="alternate" type="application/rss+xml" title="중위소득 정보센터" href="/feed.xml">
 <meta name="robots" content="index,follow">
 <meta property="og:type" content="website">
-<meta property="og:title" content="2027년 기준 중위소득 완전 정리 | 가구원 수별 표·소득 분위 계산기">
-<meta property="og:description" content="2027년 기준 중위소득 4인 가구 6,929,885원. 가구원 수별 표와 복지 급여 선정 기준, 소득 분위 계산기를 정리했습니다.">
+<meta property="og:title" content="기준 중위소득 완전 정리 | 가구원 수별 표·소득 분위 계산기">
+<meta property="og:description" content="가구원 수별 기준 중위소득 표와 복지 급여 선정 기준, 소득 분위 계산기를 정리했습니다. 연도별·가구원수별 상세 페이지도 제공합니다.">
 <meta property="og:url" content="https://median.younp.net">
 <meta property="og:site_name" content="기준 중위소득 완전 정리">
 <meta property="og:locale" content="ko_KR">
@@ -42,7 +45,7 @@ v10 (2026-09-30): feed.xml(RSS) 신규 작성, head에 alternate 링크 추가
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="2027년 기준 중위소득 4인 가구 6,929,885원 안내 이미지">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="2027년 기준 중위소득 완전 정리">
+<meta name="twitter:title" content="기준 중위소득 완전 정리">
 <meta name="twitter:description" content="가구원 수별 기준 중위소득 표와 소득 분위 계산기.">
 <meta name="twitter:image" content="https://median.younp.net/og-image.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230d6efd'/%3E%3Cpath d='M28 66 V44 M50 66 V30 M72 66 V52' stroke='white' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -73,16 +76,16 @@ v10 (2026-09-30): feed.xml(RSS) 신규 작성, head에 alternate 링크 추가
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "2027년 기준 중위소득 완전 정리",
+  "name": "기준 중위소득 완전 정리 | 가구원 수별 표·소득 분위 계산기",
   "url": "https://median.younp.net",
   "inLanguage": "ko-KR",
-  "dateModified": "2026-09-23",
+  "dateModified": "2026-10-06",
   "isPartOf": { "@type": "WebSite", "name": "중위소득 정보센터", "url": "https://median.younp.net" },
   "breadcrumb": {
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "홈", "item": "https://median.younp.net" },
-      { "@type": "ListItem", "position": 2, "name": "2027년 기준 중위소득 완전 정리", "item": "https://median.younp.net" }
+      { "@type": "ListItem", "position": 2, "name": "기준 중위소득 완전 정리", "item": "https://median.younp.net" }
     ]
   }
 }
@@ -100,7 +103,6 @@ v10 (2026-09-30): feed.xml(RSS) 신규 작성, head에 alternate 링크 추가
   "description": "가구원 수와 월 소득을 입력하면 기준 중위소득 대비 몇 %에 해당하는지 즉시 계산해주는 무료 웹 계산기입니다."
 }
 </script>
-<script src="https://hub.virz.net/widget.js" data-auto="related,random" data-place="footer" data-where="before" defer></script>
 </head>
 <body id="top" class="bg-white text-ink font-sans antialiased">
 
@@ -130,9 +132,9 @@ v10 (2026-09-30): feed.xml(RSS) 신규 작성, head에 alternate 링크 추가
   <div class="mx-auto max-w-5xl px-5 pb-14 pt-14 sm:pt-20">
     <p class="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
       <span class="inline-flex items-center gap-2"><iconify-icon icon="heroicons:sparkles" width="14" height="14"></iconify-icon>중위소득 정보센터 / <span data-year></span> 기준</span>
-      <span class="inline-flex items-center gap-1 normal-case tracking-normal text-slate-400">· 최종 업데이트 2026.09.23</span>
+      <span class="inline-flex items-center gap-1 normal-case tracking-normal text-slate-400">· 최종 업데이트 2026.10.06</span>
     </p>
-    <h1 class="mb-5 break-keep text-[34px] font-bold leading-[1.2] tracking-tight sm:text-5xl" data-aos="fade-up" data-aos-delay="60"><span data-year class="year-em"></span> 기준 중위소득<br class="hidden sm:block"> 완전 정리</h1>
+    <h1 class="mb-5 break-keep text-[34px] font-bold leading-[1.2] tracking-tight sm:text-5xl" data-aos="fade-up" data-aos-delay="60">기준 중위소득<br class="hidden sm:block"> 완전 정리</h1>
     <p class="mb-9 max-w-xl break-keep text-[15px] leading-relaxed text-slate-600 sm:text-base" data-aos="fade-up" data-aos-delay="120">뜻과 평균소득의 차이, 가구원 수별 금액표, 복지 혜택 선정 기준, 그리고 내 소득 분위까지 한 페이지에서 확인하세요.</p>
     <div class="grid gap-3 sm:grid-cols-2">
       <div class="rounded-3xl bg-brand p-6 text-white shadow-lg shadow-brand-200" data-aos="fade-up" data-aos-delay="160">
@@ -279,6 +281,12 @@ v10 (2026-09-30): feed.xml(RSS) 신규 작성, head에 alternate 링크 추가
         <a href="household-4.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">4인 가구</a>
         <a href="household-5.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">5인 가구</a>
         <a href="household-6.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">6인 가구</a>
+      </div>
+      <p class="mb-3 mt-5 flex items-center gap-1.5 text-[12.5px] font-semibold text-slate-500"><iconify-icon icon="heroicons:calendar-days" width="14" height="14"></iconify-icon>연도별로 더 자세히 보기 (전년 대비 인상률 · 그해 급여별 기준)</p>
+      <div class="flex flex-wrap gap-2">
+        <a href="year-2027.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">2027년</a>
+        <a href="year-2026.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">2026년</a>
+        <a href="history.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">역대 기준 중위소득 추이 (2017~2027)</a>
       </div>
     </div>
 
@@ -462,7 +470,7 @@ v10 (2026-09-30): feed.xml(RSS) 신규 작성, head에 alternate 링크 추가
       <ul class="grid gap-3 text-[15px] text-slate-700">
         <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="17" height="17"></iconify-icon><span class="break-keep">중위소득은 소득 순서에서 가운데 있는 값으로, 평균소득보다 체감 생활 수준에 가깝습니다.</span></li>
         <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="17" height="17"></iconify-icon><span class="break-keep"><span data-year></span> 4인 가구 기준 중위소득은 월 <span data-median4-inline></span>, 1인 가구는 월 <span data-median1-inline></span>입니다.</span></li>
-        <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="17" height="17"></iconify-icon><span class="break-keep">기초생활보장 급여는 생계 32%, 의료 40%, 주거 48%, 교육 50%를 기준으로 선정됩니다.</span></li>
+        <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="17" height="17"></iconify-icon><span class="break-keep">2024년 이후 기초생활보장 급여는 생계 32%, 의료 40%, 주거 48%, 교육 50%를 기준으로 선정됩니다.</span></li>
         <li class="flex gap-2.5"><iconify-icon icon="heroicons:check-circle" class="mt-1 shrink-0 text-brand" width="17" height="17"></iconify-icon><span class="break-keep">우리 가구 비율은 가구 소득 ÷ 가구원 수별 기준 중위소득 × 100으로 계산합니다.</span></li>
       </ul>
       <div class="mt-6 flex flex-wrap gap-2.5">
@@ -508,26 +516,36 @@ fetch('/related-posts.json', { cache: 'no-cache' })
 <script>
 // 2017~2027년 기준 중위소득 (월, 원) — 1인~6인 가구
 var MEDIAN_BY_YEAR = {
-  2017: [1652931, 2814449, 3626990, 4419014, 5175161, 6120311],
-  2018: [1672105, 2847097, 3676474, 4480497, 5242856, 6191307],
-  2019: [1707008, 2906528, 3751405, 4573248, 5361784, 6320544],
-  2020: [1757194, 2991980, 3875771, 4749174, 5525400, 6506368],
-  2021: [1827831, 3088079, 4028284, 4976208, 5642433, 6628603],
-  2022: [1944812, 3260085, 4255761, 5263732, 5883171, 6907004],
-  2023: [2077892, 3456155, 4560843, 5630077, 6164175, 7227981],
-  2024: [2228445, 3682609, 4840523, 5975935, 6521210, 7618369],
+  2017: [1652931, 2814449, 3640915, 4467380, 5293845, 6120311],
+  2018: [1672105, 2847097, 3683150, 4519202, 5355254, 6191307],
+  2019: [1707008, 2906528, 3760032, 4613536, 5467040, 6320544],
+  2020: [1757194, 2991980, 3870577, 4749174, 5627771, 6506368],
+  2021: [1827831, 3088079, 3983950, 4876290, 5757373, 6628603],
+  2022: [1944812, 3260085, 4194701, 5121080, 6024515, 6907004],
+  2023: [2077892, 3456155, 4434816, 5400964, 6330688, 7227981],
+  2024: [2228445, 3682609, 4714657, 5729913, 6695735, 7618369],
   2025: [2392013, 3932658, 5025353, 6097773, 7108192, 8064805],
   2026: [2564238, 4199292, 5359036, 6494738, 7556719, 8555952],
   2027: [2736042, 4480645, 5718091, 6929885, 8063019, 9129201]
 };
 var YEARS = Object.keys(MEDIAN_BY_YEAR).map(Number).sort(function (a, b) { return b - a; });
 var LATEST = YEARS[0];
-var BENEFITS = [
-  { rate: 32, name: '생계급여', icon: 'heroicons:banknotes' },
-  { rate: 40, name: '의료급여', icon: 'heroicons:heart' },
-  { rate: 48, name: '주거급여', icon: 'heroicons:home-modern' },
-  { rate: 50, name: '교육급여', icon: 'heroicons:academic-cap' }
+var BENEFIT_BASE = [
+  { name: '생계급여', icon: 'heroicons:banknotes' },
+  { name: '의료급여', icon: 'heroicons:heart' },
+  { name: '주거급여', icon: 'heroicons:home-modern' },
+  { name: '교육급여', icon: 'heroicons:academic-cap' }
 ];
+// 연도별 급여 선정기준 비율(기준 중위소득 대비 %) — 순서: 생계, 의료, 주거, 교육 (보건복지부 발표 기준)
+var RATES_BY_YEAR = {
+  2017: [30, 40, 43, 50], 2018: [30, 40, 43, 50], 2019: [30, 40, 44, 50], 2020: [30, 40, 45, 50],
+  2021: [30, 40, 45, 50], 2022: [30, 40, 46, 50], 2023: [30, 40, 47, 50], 2024: [32, 40, 48, 50],
+  2025: [32, 40, 48, 50], 2026: [32, 40, 48, 50], 2027: [32, 40, 48, 50]
+};
+function benefits() {
+  var r = RATES_BY_YEAR[state.year] || RATES_BY_YEAR[LATEST];
+  return BENEFIT_BASE.map(function (b, i) { return { rate: r[i], name: b.name, icon: b.icon }; });
+}
 
 var state = { year: LATEST, unit: 'month', view: 'table', household: 4 };
 
@@ -651,7 +669,7 @@ function renderBenefitTiles() {
   var m = medians();
   var wrap = $('#benefitTiles');
   wrap.innerHTML = '';
-  BENEFITS.forEach(function (b, i) {
+  benefits().forEach(function (b, i) {
     var el = document.createElement('div');
     el.className = 'overflow-hidden rounded-3xl border border-slate-200';
     el.setAttribute('data-aos', 'zoom-in');
@@ -723,7 +741,7 @@ function calculate() {
   var median = medians()[h - 1];
   var pct = (income / median) * 100;
 
-  var list = BENEFITS.filter(function (b) { return pct <= b.rate; })
+  var list = benefits().filter(function (b) { return pct <= b.rate; })
     .map(function (b) { return b.name + ' (' + b.rate + '% 이하)'; });
   if (!list.length) list = ['기초생활보장 4대 급여의 소득 기준을 넘습니다. 지자체·주거 지원 사업은 별도 기준을 확인하세요.'];
 
@@ -939,7 +957,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (navigator.share && window.isSecureContext) {
         navigator.share({
           title: document.title,
-          text: '2027년 기준 중위소득, 가구원 수별 표와 소득 분위 계산기',
+          text: '기준 중위소득 가구원 수별 표와 소득 분위 계산기',
           url: url
         }).catch(function () { /* 사용자가 취소한 경우 등은 무시 */ });
         return;
