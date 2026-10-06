@@ -2,6 +2,7 @@
 버전 이력 (median.younp.net / household-4.html)
 v1 (2026-09-30): 최초 작성
 v2 (2026-10-06): 데이터 전면 검증 반영(과거 연도 3·4·5인 값 정정), 급여별 금액 반올림 방식 수정(half-up), 연도 페이지 링크 추가
+v3 (2026-10-06): 5개년 추이의 모든 연도가 해당 연도 페이지로 연결됨
 -->
 <!DOCTYPE html>
 <html lang="ko">
@@ -165,9 +166,9 @@ v2 (2026-10-06): 데이터 전면 검증 반영(과거 연도 3·4·5인 값 정
   <section class="mb-10">
     <h2 class="mb-4 flex items-center gap-2 text-[19px] font-bold" data-aos="fade-up"><iconify-icon icon="heroicons:chart-bar" class="text-brand" width="19" height="19"></iconify-icon>4인 가구 최근 5개년 추이</h2>
     <div class="overflow-hidden rounded-3xl border border-slate-200" data-aos="fade-up" data-aos-delay="60">
-      <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4"><span class="text-[15px] font-medium">2023년</span><span class="tabular-nums text-[16px] font-semibold text-ink">5,400,964원</span></div>
-<div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4"><span class="text-[15px] font-medium">2024년</span><span class="tabular-nums text-[16px] font-semibold text-ink">5,729,913원<span class="ml-2 text-[12.5px] font-semibold text-brand">(+6.09%)</span></span></div>
-<div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4"><span class="text-[15px] font-medium">2025년</span><span class="tabular-nums text-[16px] font-semibold text-ink">6,097,773원<span class="ml-2 text-[12.5px] font-semibold text-brand">(+6.42%)</span></span></div>
+      <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4"><a href="year-2023.html" class="text-[15px] font-medium text-ink no-underline hover:text-brand">2023년</a><span class="tabular-nums text-[16px] font-semibold text-ink">5,400,964원</span></div>
+<div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4"><a href="year-2024.html" class="text-[15px] font-medium text-ink no-underline hover:text-brand">2024년</a><span class="tabular-nums text-[16px] font-semibold text-ink">5,729,913원<span class="ml-2 text-[12.5px] font-semibold text-brand">(+6.09%)</span></span></div>
+<div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4"><a href="year-2025.html" class="text-[15px] font-medium text-ink no-underline hover:text-brand">2025년</a><span class="tabular-nums text-[16px] font-semibold text-ink">6,097,773원<span class="ml-2 text-[12.5px] font-semibold text-brand">(+6.42%)</span></span></div>
 <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4"><a href="year-2026.html" class="text-[15px] font-medium text-ink no-underline hover:text-brand">2026년</a><span class="tabular-nums text-[16px] font-semibold text-ink">6,494,738원<span class="ml-2 text-[12.5px] font-semibold text-brand">(+6.51%)</span></span></div>
 <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4"><a href="year-2027.html" class="text-[15px] font-medium text-ink no-underline hover:text-brand">2027년</a><span class="tabular-nums text-[16px] font-semibold text-ink">6,929,885원<span class="ml-2 text-[12.5px] font-semibold text-brand">(+6.70%)</span></span></div>
     </div>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- feed.xml v2 (2026-10-06) — median.younp.net -->
+<!-- feed.xml v3 (2026-10-06) — median.younp.net -->
 <rss version="2.0">
   <channel>
     <title>중위소득 정보센터</title>
@@ -21,7 +21,7 @@
       <link>https://median.younp.net/year-2027.html</link>
       <guid>https://median.younp.net/year-2027.html</guid>
       <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
-      <description>4인 가구 월 6,929,885원(전년 대비 6.70% 인상), 가구원수별 표와 급여별 선정기준</description>
+      <description>4인 가구 월 6,929,885원, 전년 대비 6.70% 인상, 가구원수별 표와 급여별 선정기준</description>
     </item>
 
     <item>
@@ -29,7 +29,79 @@
       <link>https://median.younp.net/year-2026.html</link>
       <guid>https://median.younp.net/year-2026.html</guid>
       <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
-      <description>4인 가구 월 6,494,738원(전년 대비 6.51% 인상), 가구원수별 표와 급여별 선정기준</description>
+      <description>4인 가구 월 6,494,738원, 전년 대비 6.51% 인상, 가구원수별 표와 급여별 선정기준</description>
+    </item>
+
+    <item>
+      <title>2025년 기준 중위소득</title>
+      <link>https://median.younp.net/year-2025.html</link>
+      <guid>https://median.younp.net/year-2025.html</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
+      <description>4인 가구 월 6,097,773원, 전년 대비 6.42% 인상, 가구원수별 표와 급여별 선정기준</description>
+    </item>
+
+    <item>
+      <title>2024년 기준 중위소득</title>
+      <link>https://median.younp.net/year-2024.html</link>
+      <guid>https://median.younp.net/year-2024.html</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
+      <description>4인 가구 월 5,729,913원, 전년 대비 6.09% 인상, 가구원수별 표와 급여별 선정기준</description>
+    </item>
+
+    <item>
+      <title>2023년 기준 중위소득</title>
+      <link>https://median.younp.net/year-2023.html</link>
+      <guid>https://median.younp.net/year-2023.html</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
+      <description>4인 가구 월 5,400,964원, 전년 대비 5.47% 인상, 가구원수별 표와 급여별 선정기준</description>
+    </item>
+
+    <item>
+      <title>2022년 기준 중위소득</title>
+      <link>https://median.younp.net/year-2022.html</link>
+      <guid>https://median.younp.net/year-2022.html</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
+      <description>4인 가구 월 5,121,080원, 전년 대비 5.02% 인상, 가구원수별 표와 급여별 선정기준</description>
+    </item>
+
+    <item>
+      <title>2021년 기준 중위소득</title>
+      <link>https://median.younp.net/year-2021.html</link>
+      <guid>https://median.younp.net/year-2021.html</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
+      <description>4인 가구 월 4,876,290원, 전년 대비 2.68% 인상, 가구원수별 표와 급여별 선정기준</description>
+    </item>
+
+    <item>
+      <title>2020년 기준 중위소득</title>
+      <link>https://median.younp.net/year-2020.html</link>
+      <guid>https://median.younp.net/year-2020.html</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
+      <description>4인 가구 월 4,749,174원, 전년 대비 2.94% 인상, 가구원수별 표와 급여별 선정기준</description>
+    </item>
+
+    <item>
+      <title>2019년 기준 중위소득</title>
+      <link>https://median.younp.net/year-2019.html</link>
+      <guid>https://median.younp.net/year-2019.html</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
+      <description>4인 가구 월 4,613,536원, 전년 대비 2.09% 인상, 가구원수별 표와 급여별 선정기준</description>
+    </item>
+
+    <item>
+      <title>2018년 기준 중위소득</title>
+      <link>https://median.younp.net/year-2018.html</link>
+      <guid>https://median.younp.net/year-2018.html</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
+      <description>4인 가구 월 4,519,202원, 전년 대비 1.16% 인상, 가구원수별 표와 급여별 선정기준</description>
+    </item>
+
+    <item>
+      <title>2017년 기준 중위소득</title>
+      <link>https://median.younp.net/year-2017.html</link>
+      <guid>https://median.younp.net/year-2017.html</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0900</pubDate>
+      <description>4인 가구 월 4,467,380원, 가구원수별 표와 급여별 선정기준</description>
     </item>
 
     <item>

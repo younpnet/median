@@ -1,13 +1,22 @@
-// service-worker.js v3 (2026-10-06) — median.younp.net
+// service-worker.js v4 (2026-10-06) — median.younp.net
 // 핵심 페이지를 캐싱해서 오프라인/저속 회선에서도 열리게 하고, 백그라운드로 최신 버전을 갱신합니다.
 
-const CACHE_NAME = 'median-cache-v3';
+const CACHE_NAME = 'median-cache-v4';
 const CORE_ASSETS = [
   '/',
   '/index.html',
   '/privacy.html',
   '/year-2027.html',
   '/year-2026.html',
+  '/year-2025.html',
+  '/year-2024.html',
+  '/year-2023.html',
+  '/year-2022.html',
+  '/year-2021.html',
+  '/year-2020.html',
+  '/year-2019.html',
+  '/year-2018.html',
+  '/year-2017.html',
   '/history.html',
   '/household-1.html',
   '/household-2.html',

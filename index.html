@@ -23,6 +23,8 @@ v10 (2026-09-30): feed.xml(RSS) 신규 작성, head에 alternate 링크 추가
 v11 (2026-10-06): ⚠️데이터 전면 검증 — 2017~2024년 3·4·5인 가구 기준 중위소득을 보건복지부 고시값으로 정정,
                  급여별 선정 비율을 연도별(2017~2027)로 분리(기존엔 전 연도에 32/40/48/50% 적용).
                  홈 제목·메타·H1 연도 중립화, 연도별 페이지(year-2027/2026)·역대 추이(history) 링크 추가
+v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 방식 → 연도별 실제 페이지(year-2017~2027.html)로 이동.
+                 연도 페이지 11개 전체 생성, 홈의 표·계산기는 최신(2027년) 기준 + ?year= 파라미터 유지
 -->
 <!DOCTYPE html>
 <html lang="ko">
@@ -160,11 +162,11 @@ v11 (2026-10-06): ⚠️데이터 전면 검증 — 2017~2024년 3·4·5인 가�
       <iconify-icon icon="heroicons:calendar-days" width="14" height="14"></iconify-icon>기준 연도 선택
     </p>
     <div class="flex flex-wrap items-center gap-2.5" data-aos="fade-up" data-aos-delay="60">
-      <button type="button" data-year-pick="2027" class="rounded-full px-6 py-3 text-[15px] font-semibold tabular-nums">2027년 (내년 기준)</button>
-      <button type="button" data-year-pick="2026" class="rounded-full px-6 py-3 text-[15px] font-semibold tabular-nums">2026년 (올해 기준)</button>
+      <a href="year-2027.html" data-year-pick="2027" class="rounded-full px-6 py-3 text-[15px] font-semibold tabular-nums">2027년 (내년 기준)</a>
+      <a href="year-2026.html" data-year-pick="2026" class="rounded-full px-6 py-3 text-[15px] font-semibold tabular-nums">2026년 (올해 기준)</a>
       <div class="flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2">
         <iconify-icon icon="heroicons:calendar-days" class="text-slate-400" width="16" height="16"></iconify-icon>
-        <label for="year-select" class="text-[13px] text-slate-500">연도 직접 선택</label>
+        <label for="year-select" class="text-[13px] text-slate-500">다른 연도 페이지로 이동</label>
         <select id="year-select" class="rounded-full border-0 bg-transparent py-1 pl-1 pr-6 text-[14px] font-semibold text-ink tabular-nums focus:ring-0"></select>
       </div>
     </div>
@@ -180,7 +182,7 @@ v11 (2026-10-06): ⚠️데이터 전면 검증 — 2017~2024년 3·4·5인 가�
     </div>
     <p class="mt-4 flex gap-2 break-keep text-[13px] leading-relaxed text-slate-500">
       <iconify-icon icon="heroicons:information-circle" class="mt-0.5 shrink-0" width="15" height="15"></iconify-icon>
-      <span>2017년부터 2027년까지 선택할 수 있고, 선택한 연도가 아래 표와 계산기에 함께 적용됩니다. 2027년 기준 중위소득은 2026년 7월 28일 제80차 중앙생활보장위원회 의결 금액(4인 가구 6.70% 인상)으로, 2027년 1월 1일부터 적용됩니다.</span>
+      <span>연도를 선택하면 2017년부터 2027년까지 각 연도의 상세 페이지(전년 대비 인상, 급여별 금액, 주요 내용)로 이동합니다. 아래 표와 계산기는 최신 기준인 2027년 값이며, 2027년 기준 중위소득은 2026년 7월 28일 제80차 중앙생활보장위원회 의결 금액(4인 가구 6.70% 인상)으로 2027년 1월 1일부터 적용됩니다.</span>
     </p>
   </div>
 </section>
@@ -282,11 +284,20 @@ v11 (2026-10-06): ⚠️데이터 전면 검증 — 2017~2024년 3·4·5인 가�
         <a href="household-5.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">5인 가구</a>
         <a href="household-6.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">6인 가구</a>
       </div>
-      <p class="mb-3 mt-5 flex items-center gap-1.5 text-[12.5px] font-semibold text-slate-500"><iconify-icon icon="heroicons:calendar-days" width="14" height="14"></iconify-icon>연도별로 더 자세히 보기 (전년 대비 인상률 · 그해 급여별 기준)</p>
+      <p class="mb-3 mt-5 flex items-center gap-1.5 text-[12.5px] font-semibold text-slate-500"><iconify-icon icon="heroicons:calendar-days" width="14" height="14"></iconify-icon>연도별 상세 페이지 (전년 대비 인상률 · 그해 급여별 기준)</p>
       <div class="flex flex-wrap gap-2">
-        <a href="year-2027.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">2027년</a>
-        <a href="year-2026.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">2026년</a>
-        <a href="history.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold text-ink no-underline hover:border-brand hover:text-brand">역대 기준 중위소득 추이 (2017~2027)</a>
+        <a href="year-2027.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold tabular-nums text-ink no-underline hover:border-brand hover:text-brand">2027년</a>
+        <a href="year-2026.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold tabular-nums text-ink no-underline hover:border-brand hover:text-brand">2026년</a>
+        <a href="year-2025.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold tabular-nums text-ink no-underline hover:border-brand hover:text-brand">2025년</a>
+        <a href="year-2024.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold tabular-nums text-ink no-underline hover:border-brand hover:text-brand">2024년</a>
+        <a href="year-2023.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold tabular-nums text-ink no-underline hover:border-brand hover:text-brand">2023년</a>
+        <a href="year-2022.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold tabular-nums text-ink no-underline hover:border-brand hover:text-brand">2022년</a>
+        <a href="year-2021.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold tabular-nums text-ink no-underline hover:border-brand hover:text-brand">2021년</a>
+        <a href="year-2020.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold tabular-nums text-ink no-underline hover:border-brand hover:text-brand">2020년</a>
+        <a href="year-2019.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold tabular-nums text-ink no-underline hover:border-brand hover:text-brand">2019년</a>
+        <a href="year-2018.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold tabular-nums text-ink no-underline hover:border-brand hover:text-brand">2018년</a>
+        <a href="year-2017.html" class="rounded-full border border-slate-300 px-4 py-2 text-[13.5px] font-semibold tabular-nums text-ink no-underline hover:border-brand hover:text-brand">2017년</a>
+        <a href="history.html" class="rounded-full bg-brand px-4 py-2 text-[13.5px] font-semibold text-white no-underline hover:bg-brand-600 hover:text-white">역대 추이 한눈에 보기</a>
       </div>
     </div>
 
@@ -808,13 +819,9 @@ function nudgeAos() {
 document.addEventListener('DOMContentLoaded', function () {
   $('#copyYear').textContent = new Date().getFullYear();
 
+  // 연도 선택 → 해당 연도 상세 페이지로 이동 (같은 페이지에서 숫자만 바뀌지 않음)
   $('#year-select').addEventListener('change', function (e) {
-    state.year = parseInt(e.target.value, 10);
-    renderAll();
-    flashYear();
-  });
-  $$('[data-year-pick]').forEach(function (b) {
-    b.addEventListener('click', function () { state.year = Number(b.dataset.yearPick); renderAll(); flashYear(); });
+    location.href = 'year-' + parseInt(e.target.value, 10) + '.html';
   });
   $$('[data-unit]').forEach(function (b) {
     b.addEventListener('click', function () { state.unit = b.dataset.unit; renderTable(); });
