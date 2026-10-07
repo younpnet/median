@@ -1,5 +1,6 @@
 # netlify.toml — median.younp.net
-# Netlify가 배포할 때마다 npm install 후 tailwind.css를 자동으로 빌드합니다.
+# Netlify가 배포할 때마다 npm install 후 public/tailwind.css를 자동으로 빌드하고,
+# public 폴더만 공개합니다. (package.json, src, functions 등은 외부에 노출되지 않음)
 [build]
   command = "npm install && npm run build:css"
-  publish = "."
+  publish = "public"
