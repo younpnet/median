@@ -25,6 +25,8 @@ v11 (2026-10-06): ⚠️데이터 전면 검증 — 2017~2024년 3·4·5인 가�
                  홈 제목·메타·H1 연도 중립화, 연도별 페이지(year-2027/2026)·역대 추이(history) 링크 추가
 v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 방식 → 연도별 실제 페이지(year-2017~2027.html)로 이동.
                  연도 페이지 11개 전체 생성, 홈의 표·계산기는 최신(2027년) 기준 + ?year= 파라미터 유지
+v13 (2026-10-07): 기본 폭 768px(배경은 100% 유지), 로고 타이틀 홈 링크, 시스템 폰트 스택(Pretendard 제거),
+                 금액표 기본 보기 월소득+카드, 강조색 다양화(급여별 색·에메랄드·앰버), 서브페이지에도 메뉴 적용
 -->
 <!DOCTYPE html>
 <html lang="ko">
@@ -57,7 +59,6 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="중위소득센터">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
 <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
 <link rel="stylesheet" href="/tailwind.css">
 <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
@@ -81,7 +82,7 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
   "name": "기준 중위소득 완전 정리 | 가구원 수별 표·소득 분위 계산기",
   "url": "https://median.younp.net",
   "inLanguage": "ko-KR",
-  "dateModified": "2026-10-06",
+  "dateModified": "2026-10-07",
   "isPartOf": { "@type": "WebSite", "name": "중위소득 정보센터", "url": "https://median.younp.net" },
   "breadcrumb": {
     "@type": "BreadcrumbList",
@@ -110,10 +111,12 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
 <body id="top" class="bg-white text-ink font-sans antialiased">
 
 <header class="sticky top-0 z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur">
-  <div class="mx-auto max-w-5xl px-5">
+  <div class="mx-auto max-w-3xl px-5">
     <div class="flex items-center gap-3 py-3">
-      <iconify-icon icon="heroicons:chart-bar-square" class="text-brand" width="22" height="22"></iconify-icon>
-      <span class="shrink-0 whitespace-nowrap text-[15.5px] font-bold tracking-tight sm:text-[17px]">중위소득 정보센터</span>
+      <a href="/" aria-label="중위소득 정보센터 홈" class="flex shrink-0 items-center gap-3 text-ink no-underline hover:text-ink">
+        <iconify-icon icon="heroicons:chart-bar-square" class="text-brand" width="22" height="22"></iconify-icon>
+        <span class="whitespace-nowrap text-[15.5px] font-bold tracking-tight sm:text-[17px]">중위소득 정보센터</span>
+      </a>
       <span class="hidden shrink-0 whitespace-nowrap rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold tracking-wide text-brand-700 tabular-nums sm:inline-block"><span data-year></span> 기준</span>
       <a href="#s5" class="ml-auto inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-brand px-4 py-2 text-[13px] font-semibold text-white no-underline hover:bg-brand-600 hover:text-white active:bg-brand-700">
         <iconify-icon icon="heroicons:calculator" width="16" height="16"></iconify-icon>계산기
@@ -132,10 +135,10 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
   </div>
 </header>
 <section class="relative overflow-hidden bg-gradient-to-b from-brand-50 via-white to-white">
-  <div class="mx-auto max-w-5xl px-5 pb-14 pt-14 sm:pt-20">
+  <div class="mx-auto max-w-3xl px-5 pb-14 pt-14 sm:pt-20">
     <p class="mb-5 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
       <span class="inline-flex items-center gap-2"><iconify-icon icon="heroicons:sparkles" width="14" height="14"></iconify-icon>중위소득 정보센터 / <span data-year></span> 기준</span>
-      <span class="inline-flex items-center gap-1 normal-case tracking-normal text-slate-400">· 최종 업데이트 2026.10.06</span>
+      <span class="inline-flex items-center gap-1.5 normal-case tracking-normal text-emerald-700"><span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>최종 업데이트 2026.10.07</span>
     </p>
     <h1 class="mb-5 break-keep text-[34px] font-bold leading-[1.2] tracking-tight sm:text-5xl" data-aos="fade-up" data-aos-delay="60">기준 중위소득<br class="hidden sm:block"> 완전 정리</h1>
     <p class="mb-9 max-w-xl break-keep text-[15px] leading-relaxed text-slate-600 sm:text-base" data-aos="fade-up" data-aos-delay="120">뜻과 평균소득의 차이, 가구원 수별 금액표, 복지 혜택 선정 기준, 그리고 내 소득 분위까지 한 페이지에서 확인하세요.</p>
@@ -158,7 +161,7 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
 </section>
 
 <section class="border-y border-slate-200 bg-slate-50">
-  <div class="mx-auto max-w-5xl px-5 py-12">
+  <div class="mx-auto max-w-3xl px-5 py-12">
     <p class="mb-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500" data-aos="fade-up">
       <iconify-icon icon="heroicons:calendar-days" width="14" height="14"></iconify-icon>기준 연도 선택
     </p>
@@ -188,7 +191,7 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
   </div>
 </section>
 
-<nav class="mx-auto max-w-5xl px-5 py-12">
+<nav class="mx-auto max-w-3xl px-5 py-12">
   <p class="mb-5 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
     <iconify-icon icon="heroicons:list-bullet" width="14" height="14"></iconify-icon>목차
   </p>
@@ -203,15 +206,15 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
 </nav>
 
 <article id="s1" class="border-t border-slate-200 bg-white">
-  <div class="mx-auto max-w-5xl px-5 py-14">
+  <div class="mx-auto max-w-3xl px-5 py-14">
     <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
       <iconify-icon icon="heroicons:book-open" width="14" height="14"></iconify-icon>01 / 개념
     </p>
     <h2 class="mb-6 break-keep text-[26px] font-bold leading-snug tracking-tight sm:text-[32px]" data-aos="fade-up" data-aos-delay="60">기준 중위소득이란? 뜻과 평균소득과의 차이</h2>
     <p class="mb-8 max-w-2xl break-keep text-[15px] leading-[1.9] text-slate-700" data-aos="fade-up" data-aos-delay="100">중위소득은 전 국민을 소득 순으로 줄 세웠을 때 정확히 가운데에 있는 가구의 소득입니다. 평균소득은 고소득층의 영향을 크게 받을 수 있지만, 중위소득은 가운데 값을 보여주기 때문에 실제 생활 수준을 보는 데 더 적합합니다.</p>
     <div class="grid gap-4 sm:grid-cols-2">
-      <div class="rounded-3xl border border-slate-200 bg-slate-50/70 p-6" data-aos="fade-up">
-        <span class="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[11px] font-bold text-brand-700">
+      <div class="rounded-3xl border border-emerald-200 bg-emerald-50/60 p-6" data-aos="fade-up">
+        <span class="mb-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-3 py-1 text-[11px] font-bold text-white">
           <iconify-icon icon="heroicons:chart-pie" width="14" height="14"></iconify-icon>통계 개념
         </span>
         <h3 class="mb-2.5 break-keep text-[18px] font-bold">가운데 값으로서의 중위소득</h3>
@@ -230,9 +233,9 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
         </ul>
       </div>
     </div>
-    <p class="mt-6 flex items-start gap-3 break-keep rounded-3xl bg-ink p-6 text-[15px] leading-[1.85] text-white" data-aos="fade-up">
-      <iconify-icon icon="heroicons:light-bulb" class="mt-0.5 shrink-0 text-brand-300" width="20" height="20"></iconify-icon>
-      <span>기준 중위소득은 <span class="font-semibold text-brand-300">우리 가구가 어떤 복지 혜택을 받을 수 있는지</span>를 가늠하는 기준선 역할을 합니다.</span>
+    <p class="mt-6 flex items-start gap-3 break-keep rounded-3xl border border-amber-200 bg-amber-50 p-6 text-[15px] leading-[1.85] text-slate-800" data-aos="fade-up">
+      <iconify-icon icon="heroicons:light-bulb" class="mt-0.5 shrink-0 text-amber-500" width="20" height="20"></iconify-icon>
+      <span>기준 중위소득은 <span class="font-semibold text-amber-700">우리 가구가 어떤 복지 혜택을 받을 수 있는지</span>를 가늠하는 기준선 역할을 합니다.</span>
     </p>
   </div>
 
@@ -243,7 +246,7 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
 </article>
 
 <article id="s2" class="border-t border-slate-200 bg-slate-50">
-  <div class="mx-auto max-w-5xl px-5 py-14">
+  <div class="mx-auto max-w-3xl px-5 py-14">
     <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
       <iconify-icon icon="heroicons:table-cells" width="14" height="14"></iconify-icon>02 / 금액표
     </p>
@@ -269,14 +272,14 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
       </div>
     </div>
 
-    <div id="tableWrap" class="max-h-[460px] overflow-auto rounded-3xl border border-slate-200 bg-white" data-aos="fade-up">
+    <div id="tableWrap" class="hidden max-h-[460px] overflow-auto rounded-3xl border border-slate-200 bg-white" data-aos="fade-up">
       <div class="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-slate-200 bg-white/95 px-5 py-3.5 backdrop-blur">
         <span class="text-[13px] font-semibold text-slate-500">가구원 수</span>
         <span class="text-[13px] font-semibold text-slate-500" id="unitHeading">기준 중위소득 (월)</span>
       </div>
       <div id="tableBody"></div>
     </div>
-    <div id="cardWrap" class="hidden grid gap-3 sm:grid-cols-2 lg:grid-cols-3"></div>
+    <div id="cardWrap" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"></div>
 
     <p class="mt-4 break-keep text-[13px] text-slate-500" id="tableCaption"></p>
 
@@ -314,7 +317,7 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
 </article>
 
 <article id="s3" class="border-t border-slate-200 bg-white">
-  <div class="mx-auto max-w-5xl px-5 py-14">
+  <div class="mx-auto max-w-3xl px-5 py-14">
     <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
       <iconify-icon icon="heroicons:heart" width="14" height="14"></iconify-icon>03 / 복지 혜택
     </p>
@@ -335,9 +338,9 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
           <li class="flex gap-2.5"><iconify-icon icon="heroicons:users" class="mt-1 shrink-0 text-brand" width="16" height="16"></iconify-icon><span class="break-keep">한부모가족 지원, 아동 양육비 지원 사업</span></li>
         </ul>
       </div>
-      <div class="rounded-3xl border border-slate-200 p-6" data-aos="fade-up" data-aos-delay="80">
+      <div class="rounded-3xl border border-amber-200 bg-amber-50/60 p-6" data-aos="fade-up" data-aos-delay="80">
         <h3 class="mb-3.5 flex items-center gap-2 text-[17px] font-bold">
-          <iconify-icon icon="heroicons:exclamation-triangle" class="text-brand" width="18" height="18"></iconify-icon>신청 전 확인할 점
+          <iconify-icon icon="heroicons:exclamation-triangle" class="text-amber-500" width="18" height="18"></iconify-icon>신청 전 확인할 점
         </h3>
         <p class="mb-4 break-keep text-[14.5px] leading-[1.85] text-slate-600">실제 선정에는 소득만이 아니라 재산의 소득환산액, 부양의무자 기준, 급여별 세부 요건이 함께 적용됩니다. 소득이 기준 비율 이하라도 재산 기준을 넘으면 제외될 수 있습니다.</p>
         <a href="https://www.bokjiro.go.kr" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-full bg-brand px-4 py-2.5 text-[13.5px] font-semibold text-white no-underline hover:bg-brand-600 hover:text-white">
@@ -354,7 +357,7 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
 </article>
 
 <article id="s4" class="border-t border-slate-200 bg-brand-50/50">
-  <div class="mx-auto max-w-5xl px-5 py-14">
+  <div class="mx-auto max-w-3xl px-5 py-14">
     <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
       <iconify-icon icon="heroicons:variable" width="14" height="14"></iconify-icon>04 / 계산 방법
     </p>
@@ -386,7 +389,7 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
 </article>
 
 <article id="s5" class="bg-ink">
-  <div class="mx-auto max-w-5xl px-5 py-14">
+  <div class="mx-auto max-w-3xl px-5 py-14">
     <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-300 tabular-nums" data-aos="fade-up">
       <iconify-icon icon="heroicons:calculator" width="14" height="14"></iconify-icon>05 / 계산기
     </p>
@@ -444,7 +447,7 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
 </article>
 
 <article id="s6" class="border-b border-slate-200 bg-white">
-  <div class="mx-auto max-w-5xl px-5 py-14">
+  <div class="mx-auto max-w-3xl px-5 py-14">
     <p class="mb-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700 tabular-nums" data-aos="fade-up">
       <iconify-icon icon="heroicons:question-mark-circle" width="14" height="14"></iconify-icon>06 / FAQ
     </p>
@@ -503,7 +506,7 @@ v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 �
 </article>
 
 <footer class="bg-slate-50">
-  <div class="mx-auto grid max-w-5xl gap-4 px-5 py-12">
+  <div class="mx-auto grid max-w-3xl gap-4 px-5 py-12">
     <div id="related-wrap" class="hidden">
       <p class="mb-4 flex items-center gap-2 text-[15px] font-bold">
         <iconify-icon icon="heroicons:document-text" class="text-brand" width="18" height="18"></iconify-icon>함께 보면 좋은 글
@@ -547,11 +550,12 @@ var MEDIAN_BY_YEAR = {
 };
 var YEARS = Object.keys(MEDIAN_BY_YEAR).map(Number).sort(function (a, b) { return b - a; });
 var LATEST = YEARS[0];
+// 급여별 고유 색상: 생계=블루, 의료=로즈, 주거=앰버, 교육=바이올렛
 var BENEFIT_BASE = [
-  { name: '생계급여', icon: 'heroicons:banknotes' },
-  { name: '의료급여', icon: 'heroicons:heart' },
-  { name: '주거급여', icon: 'heroicons:home-modern' },
-  { name: '교육급여', icon: 'heroicons:academic-cap' }
+  { name: '생계급여', icon: 'heroicons:banknotes', text: 'text-brand', soft: 'bg-brand-50', bar: 'from-brand-200 to-brand' },
+  { name: '의료급여', icon: 'heroicons:heart', text: 'text-rose-500', soft: 'bg-rose-50', bar: 'from-rose-200 to-rose-500' },
+  { name: '주거급여', icon: 'heroicons:home-modern', text: 'text-amber-500', soft: 'bg-amber-50', bar: 'from-amber-200 to-amber-500' },
+  { name: '교육급여', icon: 'heroicons:academic-cap', text: 'text-violet-500', soft: 'bg-violet-50', bar: 'from-violet-200 to-violet-500' }
 ];
 // 연도별 급여 선정기준 비율(기준 중위소득 대비 %) — 순서: 생계, 의료, 주거, 교육 (보건복지부 발표 기준)
 var RATES_BY_YEAR = {
@@ -561,10 +565,10 @@ var RATES_BY_YEAR = {
 };
 function benefits() {
   var r = RATES_BY_YEAR[state.year] || RATES_BY_YEAR[LATEST];
-  return BENEFIT_BASE.map(function (b, i) { return { rate: r[i], name: b.name, icon: b.icon }; });
+  return BENEFIT_BASE.map(function (b, i) { return { rate: r[i], name: b.name, icon: b.icon, text: b.text, soft: b.soft, bar: b.bar }; });
 }
 
-var state = { year: LATEST, unit: 'month', view: 'table', household: 4 };
+var state = { year: LATEST, unit: 'month', view: 'card', household: 4 };
 
 // 공유 링크로 들어온 경우 URL 파라미터(year, hh)를 초기 상태에 반영
 (function applyUrlParamsToInitialState() {
@@ -692,11 +696,11 @@ function renderBenefitTiles() {
     el.setAttribute('data-aos', 'zoom-in');
     el.setAttribute('data-aos-delay', String(i * 60));
     el.innerHTML = '<div class="px-5 pb-4 pt-5">' +
-      '<iconify-icon icon="' + b.icon + '" class="mb-3 text-brand" width="22" height="22"></iconify-icon>' +
+      '<span class="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-2xl ' + b.soft + ' ' + b.text + '"><iconify-icon icon="' + b.icon + '" width="22" height="22"></iconify-icon></span>' +
       '<p class="text-[30px] font-bold leading-none tracking-tight tabular-nums">' + b.rate + '%</p>' +
       '<p class="mt-1.5 text-[14px] font-semibold">' + b.name + '</p>' +
       '<p class="mt-1 break-keep text-[12.5px] leading-relaxed text-slate-500">4인 가구 ' + won(Math.round(m[3] * b.rate / 100)) + ' 이하</p>' +
-      '</div><div class="h-2 bg-gradient-to-r from-brand-200 to-brand"></div>';
+      '</div><div class="h-2 bg-gradient-to-r ' + b.bar + '"></div>';
     wrap.appendChild(el);
   });
 }
@@ -759,8 +763,8 @@ function calculate() {
   var pct = (income / median) * 100;
 
   var list = benefits().filter(function (b) { return pct <= b.rate; })
-    .map(function (b) { return b.name + ' (' + b.rate + '% 이하)'; });
-  if (!list.length) list = ['기초생활보장 4대 급여의 소득 기준을 넘습니다. 지자체·주거 지원 사업은 별도 기준을 확인하세요.'];
+    .map(function (b) { return { t: b.name + ' (' + b.rate + '% 이하)', soft: b.soft, text: b.text, icon: 'heroicons:check-circle' }; });
+  if (!list.length) list = [{ t: '기초생활보장 4대 급여의 소득 기준을 넘습니다. 지자체·주거 지원 사업은 별도 기준을 확인하세요.', soft: 'bg-slate-100', text: 'text-slate-500', icon: 'heroicons:information-circle' }];
 
   var band;
   if (pct < 50) band = '중위소득 50% 미만 — 저소득 구간(대략 1~3분위 수준)입니다.';
@@ -780,8 +784,8 @@ function calculate() {
     '<p class="mt-5 break-keep text-[16px] font-semibold leading-relaxed">' + band + '</p>' +
     '<p class="mb-3 mt-6 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-700"><iconify-icon icon="heroicons:check-badge" width="15" height="15"></iconify-icon>선정 기준 안에 들어오는 급여</p>' +
     '<ul class="grid gap-2 text-[14.5px] text-slate-700">' +
-      list.map(function (t) {
-        return '<li class="flex gap-2.5 rounded-2xl bg-brand-50 px-4 py-3"><iconify-icon icon="heroicons:check-circle" class="mt-0.5 shrink-0 text-brand" width="18" height="18"></iconify-icon><span class="break-keep">' + t + '</span></li>';
+      list.map(function (it) {
+        return '<li class="flex gap-2.5 rounded-2xl ' + it.soft + ' px-4 py-3"><iconify-icon icon="' + it.icon + '" class="mt-0.5 shrink-0 ' + it.text + '" width="18" height="18"></iconify-icon><span class="break-keep">' + it.t + '</span></li>';
       }).join('') +
     '</ul>' +
     '<div class="mt-6 flex flex-wrap items-center gap-3 border-t border-slate-100 pt-5">' +

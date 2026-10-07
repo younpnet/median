@@ -10,7 +10,7 @@ module.exports = {
         },
         ink: { DEFAULT: '#0b1220', 800: '#111a2b', 700: '#1b2536' }
       },
-      fontFamily: { sans: ['Pretendard Variable', 'Pretendard', 'system-ui', 'sans-serif'] }
+      fontFamily: { sans: ['-apple-system', '"Malgun Gothic"', '"맑은 고딕"', 'helvetica', '"Apple SD Gothic Neo"', '"Malgun Gothic"', '"Noto Sans KR"', 'sans-serif'] }
     }
   },
   plugins: [require('@tailwindcss/forms')]
