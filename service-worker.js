@@ -1,6 +1,3 @@
-// service-worker.js v5 (2026-10-07) — median.younp.net
-// 핵심 페이지를 캐싱해서 오프라인/저속 회선에서도 열리게 하고, 백그라운드로 최신 버전을 갱신합니다.
-
 const CACHE_NAME = 'median-cache-v5';
 const CORE_ASSETS = [
   '/',

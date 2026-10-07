@@ -1,33 +1,3 @@
-<!--
-버전 이력 (median.younp.net)
-v1 (2026-09-23): 클로드 디자인 기본안 + og:image/twitter:image 메타, 파비콘, WebPage/BreadcrumbList 스키마,
-                 최종 업데이트 표시, 공유하기 버튼, 재산의 소득환산액 설명 박스 추가
-v2 (2026-09-23): 공유 버튼 클릭 시 오류 수정 — Web Share API/클립보드 API가 막힌 환경(iframe 미리보기,
-                 비-HTTPS 등)에서도 에러 없이 동작하도록 try/catch + execCommand 폴백 추가
-v3 (2026-09-23): "함께 보면 좋은 글" 목록을 하드코딩에서 분리 — 저장소 루트의 related-posts.json을
-                 fetch로 불러와 렌더링. index.html을 안 건드리고 related-posts.json만 수정하면
-                 관련 글 목록을 관리할 수 있음. JSON이 없거나 로드 실패 시 섹션은 자동으로 숨김
-v4 (2026-09-23): footer 저작권 문구 옆에 개인정보처리방침(privacy.html) 링크 추가, privacy.html 신규 작성
-v5 (2026-09-30): SEO 보완 — 계산기에 WebApplication 구조화 데이터 추가. robots.txt, sitemap.xml 신규 작성
-                 (저장소 루트에 같이 올려야 함)
-v6 (2026-09-30): URL 공유형 계산기 — 계산 결과를 ?year=&hh=&income= 파라미터로 주소창에 반영(history.replaceState),
-                 결과 박스에 "이 결과 링크 복사" 버튼 추가, 공유 링크로 들어오면 자동으로 값 복원 + 계산 + 스크롤 이동
-v7 (2026-09-30): Tailwind Play CDN 제거, Tailwind CLI 빌드 체제로 전환. package.json/tailwind.config.js/
-                 src/input.css/netlify.toml 신규 작성 — 배포 시 자동으로 /tailwind.css가 생성됨(저장소에는 안 올림)
-v8 (2026-09-30): PWA 지원 추가 — manifest.json, service-worker.js, 아이콘(icons/icon-192.png, icon-512.png,
-                 apple-touch-icon.png) 신규 작성. 홈 화면에 추가 가능해지고 오프라인에서도 기본 페이지 열림
-v9 (2026-09-30): ⚠️데이터 오류 수정 — 2026년 3·4·5인 가구 기준 중위소득이 실제 보건복지부 고시값과 달랐음
-                 (예: 4인 6,398,542원 → 6,494,738원으로 정정). 가구원수별 상세 페이지(household-1~6.html)
-                 신규 작성 및 표 섹션에 링크 추가. related-posts.json/sitemap.xml/service-worker.js도 연동
-v10 (2026-09-30): feed.xml(RSS) 신규 작성, head에 alternate 링크 추가
-v11 (2026-10-06): ⚠️데이터 전면 검증 — 2017~2024년 3·4·5인 가구 기준 중위소득을 보건복지부 고시값으로 정정,
-                 급여별 선정 비율을 연도별(2017~2027)로 분리(기존엔 전 연도에 32/40/48/50% 적용).
-                 홈 제목·메타·H1 연도 중립화, 연도별 페이지(year-2027/2026)·역대 추이(history) 링크 추가
-v12 (2026-10-06): 연도 선택이 같은 페이지에서 숫자만 바뀌던 방식 → 연도별 실제 페이지(year-2017~2027.html)로 이동.
-                 연도 페이지 11개 전체 생성, 홈의 표·계산기는 최신(2027년) 기준 + ?year= 파라미터 유지
-v13 (2026-10-07): 기본 폭 768px(배경은 100% 유지), 로고 타이틀 홈 링크, 시스템 폰트 스택(Pretendard 제거),
-                 금액표 기본 보기 월소득+카드, 강조색 다양화(급여별 색·에메랄드·앰버), 서브페이지에도 메뉴 적용
--->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -106,7 +76,6 @@ v13 (2026-10-07): 기본 폭 768px(배경은 100% 유지), 로고 타이틀 홈 
   "description": "가구원 수와 월 소득을 입력하면 기준 중위소득 대비 몇 %에 해당하는지 즉시 계산해주는 무료 웹 계산기입니다."
 }
 </script>
-<script src="https://hub.virz.net/widget.js" data-auto="related,random" defer></script>
 </head>
 <body id="top" class="bg-white text-ink font-sans antialiased">
 
@@ -238,11 +207,6 @@ v13 (2026-10-07): 기본 폭 768px(배경은 100% 유지), 로고 타이틀 홈 
       <span>기준 중위소득은 <span class="font-semibold text-amber-700">우리 가구가 어떤 복지 혜택을 받을 수 있는지</span>를 가늠하는 기준선 역할을 합니다.</span>
     </p>
   </div>
-
-<!-- site-network:start -->
-<style id="site-network-css-ssr">.site-network{--sn-accent:#2563eb;--sn-border:rgba(128,128,128,.22);--sn-card:rgba(128,128,128,.06);--sn-hover:rgba(128,128,128,.13);--sn-radius:12px;--sn-gap:12px;--sn-min:200px;--sn-ratio:16/9;--sn-title-size:1.1em;--sn-text-size:.95em;--sn-site-size:.75em;display:block;margin:2em 0;font:inherit;color:inherit;clear:both}.site-network:empty{display:none}.site-network .sn-heading{margin:0 0 .75em;padding:0;font-size:var(--sn-title-size);font-weight:700;line-height:1.4;color:inherit}.site-network .sn-items{list-style:none;margin:0;padding:0}.site-network .sn-item{margin:0;padding:0}.site-network .sn-item::before,.site-network .sn-item::marker{content:none}.site-network .sn-link{display:flex;gap:10px;text-decoration:none;color:inherit;border-radius:var(--sn-radius);-webkit-tap-highlight-color:transparent}.site-network .sn-link:focus-visible{outline:2px solid var(--sn-accent);outline-offset:2px}.site-network .sn-thumb{box-sizing:border-box;display:block;overflow:hidden;background:var(--sn-card);flex:none}.site-network .sn-thumb img{display:block;width:100%;height:100%;object-fit:cover;margin:0;border:0;max-width:none}.site-network .sn-noimg{display:flex;align-items:center;justify-content:center;padding:8px;text-align:center;background:var(--sn-ph,rgba(37,99,235,.10));color:var(--sn-accent);font-weight:700;font-size:.85em;line-height:1.3}.site-network.sn-layout-row .sn-noimg{font-size:.7em}.site-network .sn-body{display:flex;flex-direction:column;gap:4px;min-width:0}.site-network .sn-site{font-size:var(--sn-site-size);font-weight:600;color:var(--sn-accent);line-height:1.3}.site-network .sn-text{overflow-wrap:anywhere;font-size:var(--sn-text-size);line-height:1.45;font-weight:500;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.site-network.sn-layout-card .sn-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,var(--sn-min)),1fr));gap:var(--sn-gap)}.site-network.sn-layout-card .sn-link{flex-direction:column;gap:0;height:100%;background:var(--sn-card);border:1px solid var(--sn-border);overflow:hidden;transition:background-color .15s}.site-network.sn-layout-card .sn-link:hover{background:var(--sn-hover)}.site-network.sn-layout-card .sn-thumb{aspect-ratio:var(--sn-ratio);width:100%}.site-network.sn-layout-card .sn-body{padding:10px 12px 12px}.site-network.sn-layout-row .sn-items{display:grid;gap:var(--sn-gap)}.site-network.sn-layout-row .sn-link{align-items:center}.site-network.sn-layout-row .sn-thumb{width:84px;height:60px;border-radius:calc(var(--sn-radius) * .6)}.site-network.sn-layout-row .sn-link:hover .sn-text{text-decoration:underline}.site-network.sn-layout-list .sn-item + .sn-item{border-top:1px solid var(--sn-border)}.site-network.sn-layout-list .sn-link{padding:.6em 0;border-radius:0}.site-network.sn-layout-list .sn-body{flex-direction:row;align-items:baseline;gap:.6em}.site-network.sn-layout-list .sn-site{flex:none}.site-network.sn-layout-list .sn-text{-webkit-line-clamp:1}.site-network.sn-layout-list .sn-link:hover .sn-text{text-decoration:underline}.site-network.sn-layout-masonry .sn-items{column-count:var(--sn-cols,3);column-gap:var(--sn-gap)}.site-network.sn-layout-masonry .sn-item{break-inside:avoid;-webkit-column-break-inside:avoid;margin:0 0 var(--sn-gap);display:block}.site-network.sn-layout-masonry .sn-link{flex-direction:column;gap:0;background:var(--sn-card);border:1px solid var(--sn-border);overflow:hidden;transition:background-color .15s}.site-network.sn-layout-masonry .sn-link:hover{background:var(--sn-hover)}.site-network.sn-layout-masonry .sn-thumb{width:100%;height:auto;aspect-ratio:auto}.site-network.sn-layout-masonry .sn-thumb img{height:auto;object-fit:initial}.site-network.sn-layout-masonry .sn-body{padding:10px 12px 12px}.site-network.sn-layout-masonry .sn-text{-webkit-line-clamp:3}@media (max-width:768px){.site-network.sn-layout-masonry .sn-items{column-count:var(--sn-cols-m,2)}}@media (max-width:480px){.site-network{--sn-min:140px;--sn-gap:10px}}@media (prefers-reduced-motion:reduce){.site-network .sn-link{transition:none}}</style>
-<div class="site-network sn-layout-card" data-mode="related" data-layout="card" data-count="6" data-ssr="1"><h3 class="sn-heading">관련 정보 더 보기</h3><ul class="sn-items"><li class="sn-item"><a class="sn-link" href="https://salary.younp.net/gov/police/chiangam/22/"><span class="sn-thumb"><img src="https://salary.younp.net/og.png" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span><span class="sn-body"><span class="sn-site">연봉 계산기</span><span class="sn-text">2026 치안감·소방감 22호봉 월급 실수령액 – 봉급 7,543,500원 | 연봉계산기</span></span></a></li><li class="sn-item"><a class="sn-link" href="https://virz.net/"><span class="sn-thumb sn-noimg"><span>VIRz</span></span><span class="sn-body"><span class="sn-site">VIRz</span><span class="sn-text">복지정책·생활정보·건강정보·경제노트</span></span></a></li><li class="sn-item"><a class="sn-link" href="https://younp.net/국민연금-수령시기-연기-혜택-연기연금-인상률-신청/"><span class="sn-thumb"><img src="https://younp.net/wp-content/uploads/2026/02/Image_r1cht0r1cht0r1ch-1280x698.jpg" data-fb="https://younp.net/wp-content/uploads/2024/01/NPS국민연금공단2.jpg" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span><span class="sn-body"><span class="sn-site">younp</span><span class="sn-text">국민연금 수령시기 연기 혜택 연기연금 인상률 신청 방법 최대 36% 증액 꿀팁 (2026)</span></span></a></li><li class="sn-item"><a class="sn-link" href="https://salary.younp.net/gov/police/gyeonggam/2/"><span class="sn-thumb"><img src="https://salary.younp.net/og.png" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span><span class="sn-body"><span class="sn-site">연봉 계산기</span><span class="sn-text">2026 경감·소방경 2호봉 월급 실수령액 – 봉급 2,814,700원 | 연봉계산기</span></span></a></li><li class="sn-item"><a class="sn-link" href="https://virz.net/sample-page/"><span class="sn-thumb sn-noimg"><span>VIRz</span></span><span class="sn-body"><span class="sn-site">VIRz</span><span class="sn-text">Sample Page</span></span></a></li><li class="sn-item"><a class="sn-link" href="https://younp.net/국민연금-기초연금-감액/"><span class="sn-thumb"><img src="https://younp.net/wp-content/uploads/2024/01/NPS국민연금공단2.jpg" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></span><span class="sn-body"><span class="sn-site">younp</span><span class="sn-text">국민연금 많이 받으면 기초연금이 깎인다는데, 실제로 얼마나 줄어들까요?</span></span></a></li></ul></div>
-<!-- site-network:end -->
 </article>
 
 <article id="s2" class="border-t border-slate-200 bg-slate-50">
