@@ -1,5 +1,23 @@
 # median.younp.net 변경 이력
 
+## 2026-10-08 — 배포 세트 v15 (이용약관·문의 페이지 추가)
+
+- 이용약관(`/terms`), 문의(`/contact`) 페이지 신설. 개인정보처리방침과 같은 디자인, 문의 이메일은 개인정보처리방침과 같은 주소(복사 방지 표시 방식 동일)
+- 이용약관: 서비스 내용, 정보의 성격(보건복지부 고시 우선·참고용), 책임의 제한, 광고·외부 링크, 저작권, 이용자 의무, 약관 변경(시행 2026-10-08)
+- 문의: 오류 제보·기능 제안·제휴·개인정보 문의 안내, 개별 수급 상담은 129·복지로·주민센터로 안내
+- 모든 페이지 푸터에 개인정보처리방침·이용약관·문의 링크, 개인정보처리방침 푸터도 같은 형식으로 정리
+- sitemap.xml에 /terms, /contact 추가, 서비스워커 캐시 v7(새 페이지 미리 저장)
+
+| 파일 | 버전 |
+|---|---|
+| index.html | v15 |
+| privacy.html | v7 |
+| terms.html, contact.html | v1 |
+| household-1~6.html | v6 |
+| year-2017~2027.html, history.html | v4 |
+| sitemap.xml | v7 |
+| service-worker.js | v7 (캐시 median-cache-v7) |
+
 ## 2026-10-08 — 배포 세트 v14 (금액 표시 안정화·URL 통일·SEO 정리)
 
 **홈 금액이 로드마다 달라 보이던 문제**
@@ -28,9 +46,12 @@
 | feed.xml | v5 |
 | service-worker.js | v6 (캐시 median-cache-v6) |
 
-**남은 일**
-- 저장소 루트의 HTML·xml 사본은 배포되지 않음(Netlify는 public만 배포). 사이트 네트워크 워크플로가 루트(`--root "."`)에 링크를 넣고 있어 실제 사이트에 반영되지 않음 → 루트 사본 정리 + 워크플로 `--root "public"`으로 변경 필요
-- AdSense는 저장소 코드에 없음(functions/_middleware.js는 Cloudflare 전용이라 Netlify에서 미동작). 광고 삽입 경로 확인 필요
+**배포 구조 정리**
+- 사이트 네트워크 워크플로 대상 폴더를 루트(`--root "."`)에서 `--root "public"`으로 변경(실제 배포 폴더에 관련 글 링크가 들어가도록)
+- 루트에만 있어 배포되지 않던 `ads.txt`(실제 사이트에서 404였음), `og-image.png`를 public으로 복사
+- og:image 크기 메타를 실제 이미지 크기(1000×528)로 수정
+- 루트의 HTML·xml·js·json·icons 사본은 배포되지 않으므로 삭제(public이 원본)
+- 참고: AdSense 스크립트는 저장소 코드에 없음(functions/_middleware.js는 Cloudflare 전용이라 Netlify에서 미동작). 광고 삽입 경로 확인 필요
 
 ## 2026-10-07 — 배포 세트 v13 (레이아웃·메뉴·색상 개편)
 
